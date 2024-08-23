@@ -1,0 +1,8 @@
+#product-box-container {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    border-radius: 8px;
+}

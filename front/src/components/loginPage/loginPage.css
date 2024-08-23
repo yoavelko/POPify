@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+.content-wrapper {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+}
+
+.content-wrapper {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh;
+}
+
+.login-section, .signup-section {
+    width: 300px;
+    margin: 20px; 
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(11, 5, 199, 0.874);
+}
+.input-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column; /* מיקום התווית מעל תיבת הטקסט */
+}
+
+label {
+    font-size: 12px;
+    margin-bottom: 5px; /* רווח בין התווית לתיבת הטקסט */
+    color: #666; 
+}
+
+h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700; /* עובי הכותרת */
+    border-radius: 8px;
+    padding: 20px; 
+    text-align: center; /* מרכז את הטקסט */
+}
+
+/* מלל כללי */
+label, input, button {
+    font-family: 'Arial', sans-serif;
+    font-size: 14px; 
+    color: #333;
+}
+
+label {
+    font-weight: normal;
+    margin-bottom: 5px;
+    display: block;
+}
+
+input, button {
+    padding: 10px;
+    border: 1px solid #ccc; /* גבול עדין לתיבות הקלט */
+    border-radius: 4px; /* עיגול פינות */
+    width: 100%; 
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #333; 
+    color: white; 
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3
+}
+
+.checkbox-group {
+    display: inline-flex; /* שימוש ב-inline-flex כדי להימנע מתפיסת כל הרוחב */
+    align-items: center; /* יישור הכפתור והטקסט לגובה */
+    white-space: nowrap;
+    direction: ltr; /* שינוי כיוון האלמנטים לשמאל לימין */
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 5px; /* רווח לכפתור */
+    margin-left: 0; /* ביטול מרווח בצד שמאל */
+}
+
+.checkbox-group label {
+    margin: 0; /* ביטול מרווחים נוספים */
+    font-size: 14px; /* התאמת גודל הטקסט לפי הצורך */
+}
+

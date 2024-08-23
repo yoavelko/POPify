@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import Login from "../login/Login"
+import Login from "../loginPage/login"
 
 function Homepage(params) {
     return (

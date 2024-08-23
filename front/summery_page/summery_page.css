@@ -1,0 +1,26 @@
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Responsive columns */
+    gap: 10px; /* Space between grid items */
+    padding: 20px;
+    background-color: #f0f0f0; /* Background color for the grid container */
+}
+
+/* Grid items */
+.grid-item {
+    background-color: #808681; /* Green background for items */
+    color: white; /* White text color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px; /* Fixed height for items */
+    font-size: 24px;
+    border-radius: 5px; /* Rounded corners for items */
+}

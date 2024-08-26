@@ -25,3 +25,15 @@ body {
     height: 80vh;
     border-color: white;
   }
+
+#homepage-container {
+    background-color: rgb(255, 255, 255);
+}
+
+.products-container {
+    margin: 5vw;
+    width: 90vw;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}

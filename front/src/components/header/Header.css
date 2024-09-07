@@ -1,9 +1,7 @@
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI';
+#header-container {
+    width: 100%;
+    position: relative;
 }
 
 ::selection {
@@ -12,16 +10,10 @@
 }
 
 nav {
-    position: fixed;
-    background: #1b1b1b;
-    width: 100%;
-    height: 10vh; /* גובה ה-navbar */
-    padding: 0;
-    z-index: 12;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 1px solid rgb(202, 202, 202);
+    background-color: #333;
+    padding: 10px 0;
+    position: relative;
+    z-index: 10; /* מוודא שהניווט נמצא תמיד מעל הסליידר */
 }
 
 nav .menu {
@@ -29,7 +21,6 @@ nav .menu {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
     height: 100%; /* גובה המקסימלי של האלמנטים */
 }
 
@@ -38,17 +29,22 @@ nav .menu {
     align-items: center;
 }
 
+.logo {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
 
 .right {
     display: flex;
     align-items: center;
 }
-
-.logo {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center; /* מיישר את התמונה למרכז ורטיקלי */
+.right a svg {
+    margin-left: 15px;
+    cursor: pointer;
+    height: 60%; /* גובה מקסימלי של ה-svg */
+    vertical-align: middle;
 }
 
 .logo img {
@@ -57,7 +53,7 @@ nav .menu {
     object-fit: cover; /* מבטיח שהתמונה תתאים למידות המסגרת מבלי להתעוות */
     display: block; /* מבטל רווחים נוספים סביב התמונה */
     margin: 0; /* מבטל מרווחים חיצוניים */
-    padding: 0; /* מבטל רווחים פנימיים */
+    padding: 0;
 }
 
 .left ul {
@@ -89,33 +85,42 @@ nav .menu {
     color: black;
 }
 
-.right a svg {
-    margin-left: 15px;
-    cursor: pointer;
-    height: 60%; /* גובה מקסימלי של ה-svg */
-    vertical-align: middle;
-}
-.shipping {
-    position: relative;
-    height: 150px;
-    background-color: #1b1b1b;
-}
-h3 {
-    color: #fff;
-    position: absolute;
-    margin-left: 50%;
-    bottom: 8px; /* ממקם את הטקסט 8 פיקסלים מהקצה התחתון */
-}
-.BANNER{
+.BANNER {
     background-color: inherit;
     box-sizing: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: rgb(247, 238, 226);
-    
 }
-.BANNER img{
-width: 120px;
-height: 120px;
+
+.BANNER img {
+    width: 120px;
+    height: 120px;
 }
+
+.BANNER h2 {
+    position: relative;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.shipping {
+    background-color: #555;
+    padding: 10px;
+    text-align: center;
+    color: white;
+}
+
+
+
+
+
+
+
+
+

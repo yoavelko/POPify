@@ -4,11 +4,11 @@ import Homepage from './components/homepage/Homepage';
 import Header from './components/header/Header';
 import Footer from './components/footer/Footer';
 import Login from './components/login/Login';
+import Gallery from './components/Gallery/gallery';
 
 
 
 function App() {
-
 
 
   return (
@@ -17,6 +17,7 @@ function App() {
         <Route path='/' element={<><Header /><Outlet /><Footer /></>}>
           <Route index element={<Homepage />} />
           <Route path='/login' element={<Login />} />
+          <Route path='/Gallery' element={<Gallery />} />
         </Route>
       </Routes>
     </div>

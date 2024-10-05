@@ -1,4 +1,4 @@
-export const userHOST = "http://localhost:3001/user";
+export const userHOST = "/api/user";
 export const createNewUser = `${userHOST}/new-user`;
 export const updateUser = `${userHOST}/update-user`;
 export const addToCart = `${userHOST}/add-to-cart`;

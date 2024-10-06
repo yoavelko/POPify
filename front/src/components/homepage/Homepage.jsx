@@ -40,6 +40,7 @@ function Homepage() {
     }, [data]);
 
     return (
+        
         <div id="homepage-container">
             <Link to={'/login'}>to login</Link>
             <div className="products-container">

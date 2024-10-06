@@ -1,27 +1,21 @@
-import './App.css'
-import { Route, Routes, Outlet } from "react-router-dom";
+import './App.css';
+import { Route, Routes } from 'react-router-dom';
 import Homepage from './components/homepage/Homepage';
-import Header from './components/header/Header';
+import Slider from './components/Gallery/Slider'; // גלריה
+import Navbar from './components/header/Header'; // התפריט שלך
 import Footer from './components/footer/Footer';
-import Login from './components/login/Login';
-import Gallery from './components/Gallery/gallery';
-
-
 
 function App() {
-
-
   return (
-    <div id='app-container'>
+    <>
+      <Navbar />
       <Routes>
-        <Route path='/' element={<><Header /><Outlet /><Footer /></>}>
-          <Route index element={<Homepage />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/gallery' element={<Gallery />} />
-        </Route>
+        <Route path='/' element={<Slider />} /> {/* הגלריה כדף ראשי */}
+        <Route path='/homepage' element={<Homepage />} /> {/* דף הבית בנתיב Products */}
       </Routes>
-    </div>
-  )
+      <Footer/>
+    </>
+  );
 }
 
-export default App
+export default App;

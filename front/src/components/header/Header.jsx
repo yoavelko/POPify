@@ -14,15 +14,13 @@ const Navbar = () => {
             </div>
           </Link>
           <ul>
-            <li><Link to="/homepage">Products</Link></li> {/* ניווט ל-Homepage */}
-            <li><Link to="/">Home</Link></li> {/* ניווט לגלריה */}
-            <li><a href="#">Featured</a></li>
+            <li><Link to="/homepage">Products</Link></li>
+            <li><Link to="/login">log in</Link></li>
             <li><a href="#">Pop! Yourself</a></li>
           </ul>
         </div>
         
         <div className="right">
-         <li><Cart/></li>
         </div>
       </div>
     </nav>

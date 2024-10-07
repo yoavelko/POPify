@@ -4,6 +4,7 @@ import Homepage from './components/homepage/Homepage';
 import Slider from './components/Gallery/Slider'; // גלריה
 import Navbar from './components/header/Header'; // התפריט שלך
 import Footer from './components/footer/Footer';
+import LogIn from './components/login/Login';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Slider />} /> {/* הגלריה כדף ראשי */}
         <Route path='/homepage' element={<Homepage />} /> {/* דף הבית בנתיב Products */}
+        <Route path='/login' element={<LogIn/>}/>
       </Routes>
       <Footer/>
     </>

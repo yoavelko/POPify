@@ -1,69 +1,120 @@
 import './Login.css'
+import { useState } from 'react';
 
-function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
+function Login() {
+    
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [signupPassword, setSignupPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // הוספת הלוגיקה שלך כאן לטיפול בטופס
-    console.log({ email, password, rememberMe });
-  };
+    const handleLoginSubmit = (event) => {
+        event.preventDefault();
+    };
 
-  return (
-    <form className="form" onSubmit={handleSubmit}>
-      <div className="flex-column">
-        <label>Email</label>
-      </div>
-      <div className="inputForm">
-        <input
-          placeholder="Enter your Email"
-          className="input"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
+    const handleSignupSubmit = (event) => {
+        event.preventDefault();
+        if (signupPassword !== confirmPassword) {
+            alert('Passwords do not match');
+        } else {
+        }
+    };
 
-      <div className="flex-column">
-        <label>Password</label>
-      </div>
-      <div className="inputForm">
-        <input
-          placeholder="Enter your Password"
-          className="input"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
+    return (
+        <div className="content-wrapper">
+            <div className="login-section">
+                <h2>Log in</h2>
+                <form onSubmit={handleLoginSubmit}>
+                    <div className="input-group">
+                        <label htmlFor="email">Email address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="Your Email" 
+                            value={email} 
+                            onChange={(e) => setEmail(e.target.value)} 
+                            required 
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="password">Password</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Your Password" 
+                            value={password} 
+                            onChange={(e) => setPassword(e.target.value)} 
+                            required 
+                        />
+                    </div>
+                    <div className="checkbox-group">
+                        <input type="checkbox" id="remember" name="remember" />
+                        <label htmlFor="remember">Remember me</label>
+                    </div><br />
+                    <button type="submit" className="login-button">LOGIN</button>
+                </form>
+            </div>
 
-      <div className="flex-row">
-        <div>
-          <input
-            type="checkbox"
-            checked={rememberMe}
-            onChange={() => setRememberMe(!rememberMe)}
-          />
-          <label>Remember me</label>
+            <div className="signup-section">
+                <h2>Create new account</h2>
+                <form onSubmit={handleSignupSubmit}>
+                    <div className="input-group">
+                        <label htmlFor="first-name">First name</label>
+                        <input 
+                            type="text" 
+                            id="first-name" 
+                            name="first-name" 
+                            placeholder="Your First Name" 
+                            value={firstName} 
+                            onChange={(e) => setFirstName(e.target.value)} 
+                            required 
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="last-name">Last name</label>
+                        <input 
+                            type="text" 
+                            id="last-name" 
+                            name="last-name" 
+                            placeholder="Your Last Name" 
+                            value={lastName} 
+                            onChange={(e) => setLastName(e.target.value)} 
+                            required 
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="signup-password">Password</label>
+                        <input 
+                            type="password" 
+                            id="signup-password" 
+                            name="signup-password" 
+                            placeholder="Your Password" 
+                            value={signupPassword} 
+                            onChange={(e) => setSignupPassword(e.target.value)} 
+                            required 
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="confirm-password">Confirm your Password</label>
+                        <input 
+                            type="password" 
+                            id="confirm-password" 
+                            name="confirm-password" 
+                            placeholder="Confirm Your Password" 
+                            value={confirmPassword} 
+                            onChange={(e) => setConfirmPassword(e.target.value)} 
+                            required 
+                        />
+                    </div><br />
+                    <button type="submit" className="signup-button">CREATE USER</button>
+                </form>
+            </div>
         </div>
-        <span className="span">Forgot password?</span>
-      </div>
-
-      <button className="button-submit" type="submit">Sign In</button>
-
-      <p className="p">
-        Don't have an account? <span className="span">Sign Up</span>
-      </p>
-      
-      <p className="p line">Or With</p>
-      
-      <div className="flex-row">
-        {/* ניתן להוסיף אייקונים נוספים של רשתות חברתיות כאן */}
-      </div>
-    </form>
-  );
+    )
 }
 
-export default LoginForm;
+export default Login

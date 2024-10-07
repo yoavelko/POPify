@@ -20,6 +20,7 @@
 
 .box-img {
     height: 200px;
+    width: 220px;
     margin-top: 20px;
 }
 
@@ -35,6 +36,7 @@
     padding: 10px 22px;
     border-radius: 6px;
     border: none;
+    margin: 3px;
     color: #fff;
     cursor: pointer;
     background-color: #000000;

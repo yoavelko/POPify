@@ -5,6 +5,7 @@ import Slider from './components/Gallery/Slider'; // גלריה
 import Navbar from './components/header/Header'; // התפריט שלך
 import Footer from './components/footer/Footer';
 import LogIn from './components/login/Login';
+import Checkout from './components/CheckOut/checkOut';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path='/' element={<Slider />} /> {/* הגלריה כדף ראשי */}
         <Route path='/homepage' element={<Homepage />} /> {/* דף הבית בנתיב Products */}
         <Route path='/login' element={<LogIn/>}/>
+        <Route path='/CheckOut' element={<Checkout/>}/>
       </Routes>
       <Footer/>
     </>

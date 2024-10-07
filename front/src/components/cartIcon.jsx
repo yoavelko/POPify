@@ -7,7 +7,6 @@ function CartIcon() {
   const handleAddItem = () => {
     setItemCount(itemCount + 1);
   };
-
   return (
     <div onClick={handleAddItem}>
       <ShoppingCartIcon />

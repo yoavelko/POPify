@@ -1,5 +1,6 @@
 * {
     margin: 0;
+    top: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI';
@@ -87,34 +88,50 @@ nav .menu {
     background: #fff;
     color: black;
 }
-
-.right a svg {
-    margin-left: 15px;
-    cursor: pointer;
-    height: 60%; /* גובה מקסימלי של ה-svg */
-    vertical-align: middle;
-}
-.shipping {
-    position: relative;
-    height: 150px;
-    background-color: #1b1b1b;
-}
-h3 {
-    color: #fff;
-    position: absolute;
-    margin-left: 50%;
-    bottom: 8px; /* ממקם את הטקסט 8 פיקסלים מהקצה התחתון */
-}
-.BANNER{
-    background-color: inherit;
-    box-sizing: 50px;
+  
+.header__optionBasket{
     display: flex;
     align-items: center;
-    justify-content: center;
-    background-color: rgb(247, 238, 226);
-    
 }
-.BANNER img{
-width: 120px;
-height: 120px;
+.header__basketCount{
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+    nav {
+        height: 8vh;
+    }
+
+    .logo img {
+        width: 150px; /* הקטנת גודל הלוגו */
+        height: 60px;
+    }
+
+    .left ul {
+        display: none; /* הסתרת התפריט הראשי במסכים קטנים */
+    }
+
+    .hamburger-menu {
+        display: block; /* הצגת תפריט "המבורגר" */
+        cursor: pointer;
+        font-size: 2em;
+        color: white;
+    }
+}
+
+/* נקודת שבירה למסכים ממש קטנים (טלפונים) */
+@media (max-width: 480px) {
+    .logo img {
+        width: 120px; /* עוד הקטנה של הלוגו */
+        height: 50px;
+    }
+
+    nav .menu {
+        flex-direction: column; /* מסדר את האלמנטים אחד מתחת לשני */
+    }
+
+    .hamburger-menu {
+        font-size: 1.5em;
+    }
 }

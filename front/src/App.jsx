@@ -6,10 +6,12 @@ import Navbar from './components/header/Header'; // התפריט שלך
 import Footer from './components/footer/Footer';
 import LogIn from './components/login/Login';
 import Checkout from './components/CheckOut/checkOut';
+import {CartProvider} from './components/cartIcon'
 
 function App() {
   return (
     <>
+    <CartProvider>
       <Navbar />
       <Routes>
         <Route path='/' element={<Slider />} /> {/* הגלריה כדף ראשי */}
@@ -18,6 +20,7 @@ function App() {
         <Route path='/CheckOut' element={<Checkout/>}/>
       </Routes>
       <Footer/>
+      </CartProvider>
     </>
   );
 }

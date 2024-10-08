@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
-import ShoppingCartIcon from '../media/carticon.svg';
+// CartContext.js
+import axios from "axios";
+import cookies from "js-cookie";
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-function CartIcon() {
-  const [itemCount, setItemCount] = useState(0);
+const CartContext = createContext();
 
-  const handleAddItem = () => {
-    setItemCount(itemCount + 1);
-  };
-  return (
-    <div onClick={handleAddItem}>
-      <ShoppingCartIcon />
-      <span>{itemCount}</span>
-    </div>
-  );
-}
+export const useCart = () => useContext(CartContext);
 
-export default CartIcon;
+export const CartProvider = ({ children }) => {
+    const [cartItemCount, setCartItemCount] = useState(0);
+
+    useEffect(() => {
+        const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+        setCartItemCount(storedCart.length);
+    }, []);
+
+    return (
+        <CartContext.Provider value={{ cartItemCount, setCartItemCount }}>
+            {children}
+        </CartContext.Provider>
+    );
+};

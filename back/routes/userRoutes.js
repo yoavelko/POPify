@@ -1,9 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
-const { createNewUser, updateUser, addToCart, removeFromCart, searchProducts, addToWishList, removeFromWishList, getProducts } = require('../controllers/user');
+const { 
+    login,
+    createNewUser, 
+    updateUser, 
+    addToCart, 
+    removeFromCart, 
+    searchProducts, 
+    addToWishList, 
+    removeFromWishList, 
+    getProducts 
+} = require('../controllers/user');
 
-router.post('/new-user', createNewUser);
+router.post('/login', login);
+router.post('/', createNewUser);
 router.put('/update-user', updateUser);
 router.patch('/add-to-cart', addToCart);
 router.patch('/remove-from-cart', removeFromCart);

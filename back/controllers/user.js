@@ -1,7 +1,35 @@
 const User = require('../models/userSchema');
 const Product = require('../models/productSchema');
 
+exports.login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // בדיקת שדות חובה
+        if (!email || !password) {
+            return res.status(400).json({ message: "Email and password are required" });
+        }
+
+        // חיפוש משתמש לפי אימייל וסיסמה
+        const user = await User.findOne({ email, password });
+
+        if (!user) {
+            return res.status(401).json({ message: "Invalid email or password" });
+        }
+
+        // החזרת תגובה עם הודעת הצלחה (אפשר גם להוסיף טוקן ב-auth אמיתי)
+        res.status(200).json({ 
+            message: "Login successful", 
+            user: { id: user._id, email: user.email, name: user.name }
+        });
+    } catch (error) {
+        console.error("Error during login:", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
 exports.createNewUser = async (req, res) => {
+    console.log("Request body:", req.body);
     try {
         const { name, lastName, email, password, address, isAdmin } = req.body;
 

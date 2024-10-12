@@ -30,6 +30,7 @@ function Slider() {
         onClick={index => setActiveIndex(index)}  // ווידוי שפונקציית onClick מוגדרת נכון
       />
     </div>
+    
   );
 }
 

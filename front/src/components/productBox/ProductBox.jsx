@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import cookies from 'js-cookie';
 import { useCart } from '../cartIcon';
+import e from 'cors';
 
 function extractDriveFileId(link) {
     if (typeof link !== "string") {
@@ -68,6 +69,8 @@ function ProductBox({ index, value }) {
         : `https://drive.google.com/thumbnail?id=${imgIds[0]}`;
 
     return (
+        <div>
+            
         <div id='product-box-container' onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
             <img className='box-img' src={imageUrl} alt="None" />
             <div>{value.name}</div>
@@ -77,6 +80,7 @@ function ProductBox({ index, value }) {
                 <button className="button" onClick={() => addToCartFunc(value)}>Cart</button>
                 <button className="button" onClick={() => addToWishListFunc(value)}>Wish</button>
             </div>
+        </div>
         </div>
     );
 }

@@ -97,41 +97,59 @@ nav .menu {
     margin-left: 10px;
     margin-right: 10px;
 }
-
-@media (max-width: 768px) {
-    nav {
-        height: 8vh;
-    }
-
-    .logo img {
-        width: 150px; /* הקטנת גודל הלוגו */
-        height: 60px;
-    }
-
-    .left ul {
-        display: none; /* הסתרת התפריט הראשי במסכים קטנים */
-    }
-
-    .hamburger-menu {
-        display: block; /* הצגת תפריט "המבורגר" */
-        cursor: pointer;
-        font-size: 2em;
-        color: white;
-    }
+.sub-menu-wrap-pro{
+    position: absolute;
+    top: 100%;
+    right: 10%;
+    width: 320px;
+    max-height: 0px;
+    overflow: hidden;
+    transition: max-height 0.5s;
+}
+.sub-menu-wrap-pro.open{
+    max-height: 400px;
+}
+.sub-menu-pro{
+    background: #fff;
+    padding: 20px;
+    margin: 10px;
+}
+.user-icon{
+    width: 30px;
+    height: 30px;
+    color: #fff;
+    cursor: pointer;
+    margin-left: 20px;
+}
+.user-info{
+    display: flex;
+    align-items: center;
+}
+.sub-menu-pro hr{
+    border: 0;
+    height: 1px;
+    width: 100%;
+    background: #ccc;
+    margin: 15px 0 10px;
+}
+.sub-menu-link{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #525252;
+    margin: 12px 0 ;
+}
+.sub-menu-link p{
+    width: 100%;
+}
+.sub-menu-link span{
+    font-size: 22px;
+    transition: transform 0.5s;
+}
+.sub-menu-link:hover span{
+    transform: translateX(5px);
+}
+.sub-menu-link:hover p{
+    font-weight: 600;
 }
 
-/* נקודת שבירה למסכים ממש קטנים (טלפונים) */
-@media (max-width: 480px) {
-    .logo img {
-        width: 120px; /* עוד הקטנה של הלוגו */
-        height: 50px;
-    }
-
-    nav .menu {
-        flex-direction: column; /* מסדר את האלמנטים אחד מתחת לשני */
-    }
-
-    .hamburger-menu {
-        font-size: 1.5em;
-    }
-}

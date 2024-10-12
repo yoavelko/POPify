@@ -7,6 +7,7 @@ function Login() {
     const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
     const [loginError, setLoginError] = useState('');
+    const [user, setUser]=useState(null);
 
     // State for signup form
     const [firstName, setFirstName] = useState('');
@@ -27,7 +28,13 @@ function Login() {
             if (response.status === 200) {
                 alert('Login successful!');
                 console.log(response.data);
+                if(response.data.user){
+                const { name, lastName}=response.data.user;
+                setUser({name, lastName});
+                localStorage.setItem('user', JSON.stringify({ name, lastName }));
             }
+        }
+        
         } catch (error) {
             console.error('Error logging in:', error);
             alert('Login failed.');
@@ -64,6 +71,7 @@ function Login() {
     };
 
     return (
+        
         <div className="content-wrapper">
             {/* Login Form */}
             <div className="login-section">

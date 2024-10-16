@@ -1,4 +1,3 @@
-// CheckOut.js
 import React, { useEffect, useState } from 'react';
 import './CheckOut.css';
 import Subtotal from './Subtotal';
@@ -12,7 +11,9 @@ function CheckOut() {
     }, []);
 
     return (
+        
         <div className='checkout'>
+            
             <h1>Check Out</h1>
             <div className='checkout_left'>
                 {cartItems.length > 0 ? (

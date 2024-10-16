@@ -6,11 +6,14 @@ import Navbar from './components/header/Header'; // התפריט שלך
 import Footer from './components/footer/Footer';
 import LogIn from './components/login/Login';
 import Checkout from './components/CheckOut/checkOut';
-import {CartProvider} from './components/cartIcon'
+import {CartProvider} from './components/cartIcon';
+import { UserProvider } from './context/UserContext'; // ייבוא ה-UserProvider
+
 
 function App() {
   return (
     <>
+    <UserProvider>
     <CartProvider>
       <Navbar />
       <Routes>
@@ -21,6 +24,7 @@ function App() {
       </Routes>
       <Footer/>
       </CartProvider>
+      </UserProvider>
     </>
   );
 }

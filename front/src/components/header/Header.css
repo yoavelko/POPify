@@ -110,9 +110,9 @@ nav .menu {
     max-height: 400px;
 }
 .sub-menu-pro{
-    background: #fff;
-    padding: 20px;
-    margin: 10px;
+    display: flex;
+  flex-direction: column; /* מבטיח שכל פסקה תהיה בשורה נפרדת */
+  gap: 10px;
 }
 .user-icon{
     width: 30px;
@@ -123,7 +123,9 @@ nav .menu {
 }
 .user-info{
     display: flex;
-    align-items: center;
+    left: auto;
+    flex-direction: column;
+    background-color: #fff;
 }
 .sub-menu-pro hr{
     border: 0;
@@ -137,12 +139,12 @@ nav .menu {
     align-items: center;
     text-decoration: none;
     color: #525252;
-    margin: 12px 0 ;
+    gap: 8px;
 }
 .sub-menu-link p{
     width: 100%;
 }
-.sub-menu-link span{
+sub-menu-link span{
     font-size: 22px;
     transition: transform 0.5s;
 }

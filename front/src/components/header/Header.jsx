@@ -10,8 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { PiShoppingCartSimpleBold } from "react-icons/pi";
 import { GoHeart } from "react-icons/go";
 
-
-const Navbar = ({ setQuery }) => { // הוספת פרופס לשינוי המצב של החיפוש
+const Navbar = ({ setQuery }) => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const { cartItemCount } = useCart();
   const [user, setUser] = useState(null);
@@ -20,6 +19,7 @@ const Navbar = ({ setQuery }) => { // הוספת פרופס לשינוי המצ�
     setIsSubMenuOpen(!isSubMenuOpen);
   };
 
+  // בדיקת סטטוס המשתמש ב-useEffect
   useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
@@ -38,7 +38,7 @@ const Navbar = ({ setQuery }) => { // הוספת פרופס לשינוי המצ�
           </Link>
           <ul>
             <li><Link to="/homepage">Products</Link></li>
-            <li><Link to="/login">Log In</Link></li>
+            {!user && <li><Link to="/login">Log In</Link></li>}
             <li><a href="#">Pop! Yourself</a></li>
           </ul>
         </div>
@@ -48,7 +48,7 @@ const Navbar = ({ setQuery }) => { // הוספת פרופס לשינוי המצ�
             id="search-query"
             type="text"
             placeholder="Search..."
-            onChange={(event) => setQuery(event.target.value)} // עדכון פרופס החיפוש
+            onChange={(event) => setQuery(event.target.value)}
           />
           <Link to="/CheckOut" className='header__link'>
             <div className='header__optionBasket'>
@@ -58,28 +58,45 @@ const Navbar = ({ setQuery }) => { // הוספת פרופס לשינוי המצ�
           <PiShoppingCartSimpleBold className='user-icon' />
           <GoHeart className='user-icon' />
           <CgProfile className='user-icon' onClick={toggleMenu} />
+
+          {/* תפריט משנה מותאם לפי סטטוס המשתמש */}
           <div className={`sub-menu-wrap-pro ${isSubMenuOpen ? 'open' : 'closed'}`} id='subMenu'>
             <div className='sub-menu-pro'>
               <div className='user-info'>
                 <CgProfile className='form-icon' />
-                {user && <h3>{user.name} {user.lastName}</h3>}
-              </div>
-              <hr />
-              <Link className='sub-menu-link'>
-                <RiProfileLine />
-                <p>Edit Profile</p>
-                <span> - </span>
-              </Link>
-              <Link className='sub-menu-link'>
+                {user ? (
+                  <>
+                    <h3>{user.name} {user.lastName}</h3>
+                    <hr/>
+                    <Link className='sub-menu-link'>
+                      <RiProfileLine />
+                      <p>Edit Profile</p>
+                      <span> - </span>
+                    </Link>
+                    <Link className='sub-menu-link'>
+                      <IoBagCheckOutline />
+                      <p>Order History</p>
+                      <span> - </span>
+                    </Link>
+                    <Link className='sub-menu-link'>
                 <CiLogout />
                 <p>Log-Out</p>
                 <span> - </span>
               </Link>
+                  </>
+                ) : (
+                  <>
+                  <p>Guest User</p>
+                  <hr />
               <Link className='sub-menu-link'>
-                <IoBagCheckOutline />
-                <p>Order History</p>
+                <CiLogout />
+                <p>Log-in</p>
                 <span> - </span>
               </Link>
+              </>
+                )}
+              </div>
+              
             </div>
           </div>
         </div>

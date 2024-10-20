@@ -1,16 +1,14 @@
-import { Link } from "react-router-dom";
 import { useEffect, useState } from 'react';
-import Loader from "../loader/Loader";
 import ProductBox from "../productBox/ProductBox";
 import './Homepage.css';
 import cookies from 'js-cookie';
 import { getProducts } from '../../utils/UserRoutes';
 import axios from 'axios';
-import Navbar from '../header/Header'; // ודא שאתה מייבא את ה-Header
+import { useUser } from '../../context/UserContext';
 
 function Homepage() {
     const [data, setData] = useState([]);
-    const [query, setQuery] = useState(""); // שינוי מצבי החיפוש ל-string
+    const { query } = useUser(); // שינוי מצבי החיפוש ל-string
 
     useEffect(() => {
         if (!cookies.get("userId")) {
@@ -41,7 +39,6 @@ function Homepage() {
 
     return (
         <div>
-            <Navbar setQuery={setQuery} /> {/* העברת פונקציית ה-setQuery ל-Header */}
             <div id="homepage-container">
                 <div className="products-container">
                     {filteredProducts.length > 0 ? (

@@ -9,6 +9,7 @@ export const useUser = () => useContext(UserContext);
 // ספק הקונטקסט לכל האפליקציה
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [query, setQuery] = useState("");
 
   // טעינת המשתמש מה-localStorage כשהאפליקציה עולה
   useEffect(() => {
@@ -30,8 +31,12 @@ export const UserProvider = ({ children }) => {
     localStorage.removeItem('user');
   };
 
+  const updateQuery = (newQuery) => {
+    setQuery(newQuery);
+  };
+
   return (
-    <UserContext.Provider value={{ user, updateUser, logout }}>
+    <UserContext.Provider value={{ user, updateUser, logout, query, updateQuery }}>
       {children}
     </UserContext.Provider>
   );

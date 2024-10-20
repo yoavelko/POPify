@@ -9,8 +9,10 @@ import { IoBagCheckOutline } from "react-icons/io5";
 import React, { useEffect, useState } from 'react';
 import { PiShoppingCartSimpleBold } from "react-icons/pi";
 import { GoHeart } from "react-icons/go";
+import { useUser } from '../../context/UserContext'
 
 const Navbar = ({ setQuery }) => {
+  const { updateQuery } = useUser();
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const { cartItemCount } = useCart();
   const [user, setUser] = useState(null);
@@ -44,18 +46,19 @@ const Navbar = ({ setQuery }) => {
         </div>
 
         <div className="right">
+          {/* שדה החיפוש */}
           <input
             id="search-query"
             type="text"
             placeholder="Search..."
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => updateQuery(event.target.value)} // העברת מילות החיפוש
           />
           <Link to="/CheckOut" className='header__link'>
             <div className='header__optionBasket'>
               <span className='header__optionLineTwo header__basketCount'>{cartItemCount}</span>
             </div>
           </Link>
-          <PiShoppingCartSimpleBold className='user-icon' />
+          <PiShoppingCartSimpleBold size={20} className='user-icon' />
           <GoHeart className='user-icon' />
           <CgProfile className='user-icon' onClick={toggleMenu} />
 
@@ -79,24 +82,23 @@ const Navbar = ({ setQuery }) => {
                       <span> - </span>
                     </Link>
                     <Link className='sub-menu-link'>
-                <CiLogout />
-                <p>Log-Out</p>
-                <span> - </span>
-              </Link>
+                      <CiLogout />
+                      <p>Log-Out</p>
+                      <span> - </span>
+                    </Link>
                   </>
                 ) : (
                   <>
-                  <p>Guest User</p>
-                  <hr />
-              <Link className='sub-menu-link'>
-                <CiLogout />
-                <p>Log-in</p>
-                <span> - </span>
-              </Link>
-              </>
+                    <p>Guest User</p>
+                    <hr />
+                    <Link className='sub-menu-link'>
+                      <CiLogout />
+                      <p>Log-in</p>
+                      <span> - </span>
+                    </Link>
+                  </>
                 )}
               </div>
-              
             </div>
           </div>
         </div>

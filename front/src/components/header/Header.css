@@ -1,7 +1,8 @@
+/* הגדרות כלליות */
 * {
     margin: 0;
-    top: 0;
     padding: 0;
+    top: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI';
 }
@@ -11,11 +12,12 @@
     background: #fff;
 }
 
+/* ניווט */
 nav {
-    position: fixed;
+    position: sticky;
     background: black;
     width: 100%;
-    height: 10vh; /* גובה ה-navbar */
+    height: 10vh;
     padding: 0;
     z-index: 12;
     display: flex;
@@ -30,36 +32,27 @@ nav .menu {
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    height: 100%; /* גובה המקסימלי של האלמנטים */
 }
 
-.left {
-    display: flex;
-    align-items: center;
-}
-
-
-.right {
+/* יישור ומבנה */
+.left, .right {
     display: flex;
     align-items: center;
 }
 
 .logo {
-    margin: 0;
-    padding: 0;
     display: flex;
-    align-items: center; /* מיישר את התמונה למרכז ורטיקלי */
+    align-items: center;
 }
 
 .logo img {
-    width: 200px; /* הגדרת גודל מתאים ללוגו */
-    height: 80px; /* הגדרת גובה מתאים ללוגו */
-    object-fit: cover; /* מבטיח שהתמונה תתאים למידות המסגרת מבלי להתעוות */
-    display: block; /* מבטל רווחים נוספים סביב התמונה */
-    margin: 0; /* מבטל מרווחים חיצוניים */
-    padding: 0; /* מבטל רווחים פנימיים */
+    width: 200px;
+    height: 80px;
+    object-fit: cover;
+    display: block;
 }
 
+/* רשימות וקישורים */
 .left ul {
     display: flex;
     align-items: center;
@@ -77,7 +70,7 @@ nav .menu {
 .left ul li a {
     text-decoration: none;
     color: #fff;
-    font-size: 1.5vh; /* גודל פונט יחסית לגובה ה-navbar */
+    font-size: 1.5vh;
     font-weight: 500;
     padding: 8px 15px;
     border-radius: 5px;
@@ -88,70 +81,83 @@ nav .menu {
     background: #fff;
     color: black;
 }
-  
-.header__optionBasket{
+
+/* עגלת קניות */
+.header__optionBasket {
     display: flex;
     align-items: center;
 }
-.header__basketCount{
-    margin-left: 10px;
-    margin-right: 10px;
+
+.header__basketCount {
+    margin: 0 10px;
 }
-.sub-menu-wrap-pro{
+
+/* תפריט משתמש */
+.sub-menu-wrap-pro {
     position: absolute;
     top: 100%;
     right: 10%;
     width: 320px;
-    max-height: 0px;
+    max-height: 0;
     overflow: hidden;
     transition: max-height 0.5s;
 }
-.sub-menu-wrap-pro.open{
+
+.sub-menu-wrap-pro.open {
     max-height: 400px;
 }
-.sub-menu-pro{
+
+.sub-menu-pro {
     display: flex;
-  flex-direction: column; /* מבטיח שכל פסקה תהיה בשורה נפרדת */
-  gap: 10px;
+    flex-direction: column;
+    gap: 10px;
 }
-.user-icon{
+
+.user-icon {
     width: 30px;
     height: 30px;
     color: #fff;
     cursor: pointer;
     margin-left: 20px;
 }
-.user-info{
+
+.user-info {
     display: flex;
-    left: auto;
     flex-direction: column;
     background-color: #fff;
 }
-.sub-menu-pro hr{
+
+/* קו מפריד */
+.sub-menu-pro hr {
     border: 0;
     height: 1px;
     width: 100%;
     background: #ccc;
     margin: 15px 0 10px;
 }
-.sub-menu-link{
+
+/* קישורי תפריט */
+.sub-menu-link {
     display: flex;
     align-items: center;
     text-decoration: none;
     color: #525252;
     gap: 8px;
 }
-.sub-menu-link p{
+
+.sub-menu-link p {
     width: 100%;
 }
-sub-menu-link span{
+
+.sub-menu-link span {
     font-size: 22px;
     transition: transform 0.5s;
 }
-.sub-menu-link:hover span{
+
+.sub-menu-link:hover span {
     transform: translateX(5px);
 }
-.sub-menu-link:hover p{
+
+.sub-menu-link:hover p {
     font-weight: 600;
 }
-

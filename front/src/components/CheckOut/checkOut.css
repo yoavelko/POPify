@@ -155,6 +155,8 @@
 }
 
 .checkout-button {
+  pointer-events: auto; /* Ensure it’s clickable */
+  opacity: 1;
   width: 100%;
   padding: 15px;
   background: #28a745;

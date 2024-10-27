@@ -20,6 +20,12 @@ const Navbar = ({ setQuery }) => {
   const toggleMenu = () => {
     setIsSubMenuOpen(!isSubMenuOpen);
   };
+  
+  const handleLogout = () => {
+    localStorage.removeItem('userToken'); // Adjust if the token is stored elsewhere
+    alert('You have been logged out successfully.');
+    window.location.href = '/login'; // Redirect to the login page or homepage
+};
 
   // בדיקת סטטוס המשתמש ב-useEffect
   useEffect(() => {
@@ -82,7 +88,7 @@ const Navbar = ({ setQuery }) => {
                       <span> - </span>
                     </Link>
                     <Link className='sub-menu-link'>
-                      <CiLogout />
+                      <CiLogout onClick={handleLogout}/>
                       <p>Log-Out</p>
                       <span> - </span>
                     </Link>

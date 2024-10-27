@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { MdOutlineCancel } from "react-icons/md";
+import axios from 'axios';
 import './CheckOut.css';
 
 function extractDriveFileId(link) {
@@ -9,26 +10,24 @@ function extractDriveFileId(link) {
   return match ? match[1] : null;
 }
 
+const userData = JSON.parse(localStorage.getItem('user'));
 const CheckOut = () => {
+  const userId = userData ? userData.id : null;
   const [cartItems, setCartItems] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  // טעינת העגלה והדפסת תוכן לדיבוג
   useEffect(() => {
     const loadCart = () => {
       try {
         const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-        console.log('Loading cart contents:', storedCart);
-        
-        // וידוא שלכל פריט יש ID ייחודי וכמות
         const validatedCart = storedCart.map((item, index) => ({
           ...item,
-          id: item.id || `item-${index}`, // אם אין ID, ניצור אחד
+          id: item.id || `item-${index}`,
           quantity: Number(item.quantity) || 1,
           price: Number(item.price) || 0
         }));
-        
-        console.log('Validated cart:', validatedCart);
         setCartItems(validatedCart);
       } catch (error) {
         console.error('Error loading cart:', error);
@@ -49,41 +48,58 @@ const CheckOut = () => {
     };
 
     calculateSubtotal();
-    localStorage.setItem('cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
   const updateQuantity = (targetId, delta) => {
-    console.log('Updating quantity for item:', targetId, 'delta:', delta);
-    
     setCartItems(prevCartItems => {
-      const updatedCart = prevCartItems.map(item => {
+      return prevCartItems.map(item => {
         if (item.id === targetId) {
           const newQuantity = Math.max(1, (item.quantity || 1) + delta);
-          console.log(`Updating item ${item.id} (${item.name}) from ${item.quantity} to ${newQuantity}`);
-          return {
-            ...item,
-            quantity: newQuantity
-          };
+          return { ...item, quantity: newQuantity };
         }
         return item;
       });
-      
-      console.log('Updated cart:', updatedCart);
-      return updatedCart;
     });
   };
 
   const removeItem = (targetId) => {
-    console.log('Removing item:', targetId);
     setCartItems(prevItems => prevItems.filter(item => item.id !== targetId));
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async (event) => {
+    event.preventDefault();
     if (cartItems.length === 0) {
       alert('אנא הוסף מוצרים לעגלה לפני המעבר לקופה');
       return;
     }
-    alert('מעבר לקופה');
+
+    setLoading(true);
+    setError('');
+
+    const orderData = {
+      prodcutArr: cartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+      })),
+      userId: userId, // replace with actual user ID
+      status: "Pending",
+      totalSum: subtotal,
+      address: "City, Street" // Update with actual address if needed
+    };
+
+    try {
+      const response = await axios.post('http://localhost:3001/order/orders', orderData);
+      alert('ההזמנה בוצעה בהצלחה');
+      setCartItems([]);
+      localStorage.removeItem('cart');
+    } catch (error) {
+      console.error('Error creating order:', error);
+      setError('הייתה בעיה ביצירת ההזמנה. נסה שוב מאוחר יותר.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const shipping = subtotal > 200 ? 0 : 30;
@@ -113,55 +129,40 @@ const CheckOut = () => {
               </tr>
             </thead>
             <tbody>
-              {cartItems.map(item => {
-                console.log('Rendering item:', item); // דיבוג
-                return (
-                  <tr key={item.id}>
-                    <td className="product-info">
-                      <img
-                        src={`https://drive.google.com/thumbnail?id=${extractDriveFileId(item.img?.[0]) || ''}`}
-                        alt={item.name}
-                        className="item-image"
-                        onError={(e) => {
-                          e.target.src = '/placeholder-image.jpg';
-                        }}
-                      />
-                      <div className="product-details">
-                        <div className="product-name">{item.name}</div>
-                        {item.size && <div className="product-size">מידה: {item.size}</div>}
-                      </div>
-                    </td>
-                    <td>₪{Number(item.price).toFixed(2)}</td>
-                    <td className="quantity-control">
-                      <button 
-                        onClick={() => updateQuantity(item.id, -1)}
-                        className="quantity-button"
-                        aria-label="הפחת כמות"
-                      >
-                        <FaMinus size={12} />
-                      </button>
-                      <span className="quantity-display">{item.quantity}</span>
-                      <button 
-                        onClick={() => updateQuantity(item.id, 1)}
-                        className="quantity-button"
-                        aria-label="הוסף כמות"
-                      >
-                        <FaPlus size={12} />
-                      </button>
-                    </td>
-                    <td>₪{(Number(item.price) * item.quantity).toFixed(2)}</td>
-                    <td>
-                      <button 
-                        className="remove-item" 
-                        onClick={() => removeItem(item.id)}
-                        aria-label="הסר פריט"
-                      >
-                        <MdOutlineCancel size={18} />
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {cartItems.map(item => (
+                <tr key={item.id}>
+                  <td className="product-info">
+                    <img
+                      src={`https://drive.google.com/thumbnail?id=${extractDriveFileId(item.img?.[0]) || ''}`}
+                      alt={item.name}
+                      className="item-image"
+                      onError={(e) => {
+                        e.target.src = '/placeholder-image.jpg';
+                      }}
+                    />
+                    <div className="product-details">
+                      <div className="product-name">{item.name}</div>
+                      {item.size && <div className="product-size">מידה: {item.size}</div>}
+                    </div>
+                  </td>
+                  <td>₪{Number(item.price).toFixed(2)}</td>
+                  <td className="quantity-control">
+                    <button onClick={() => updateQuantity(item.id, -1)} className="quantity-button" aria-label="הפחת כמות">
+                      <FaMinus size={12} />
+                    </button>
+                    <span className="quantity-display">{item.quantity}</span>
+                    <button onClick={() => updateQuantity(item.id, 1)} className="quantity-button" aria-label="הוסף כמות">
+                      <FaPlus size={12} />
+                    </button>
+                  </td>
+                  <td>₪{(Number(item.price) * item.quantity).toFixed(2)}</td>
+                  <td>
+                    <button className="remove-item" onClick={() => removeItem(item.id)} aria-label="הסר פריט">
+                      <MdOutlineCancel size={18} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
 
@@ -185,9 +186,10 @@ const CheckOut = () => {
                 </div>
               )}
             </div>
-            <button className="checkout-button" onClick={handleCheckout}>
-              מעבר לקופה
+            <button className="checkout-button" onClick={handleCheckout} disabled={loading}>
+              {loading ? 'ממתין...' : 'מעבר לקופה'}
             </button>
+            {error && <p className="error-message">{error}</p>}
           </div>
         </>
       )}

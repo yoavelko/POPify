@@ -118,7 +118,36 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
-
+exports.findUser = async (req, res) => {
+    try {
+      const { userEmail } = req.body;
+      if (userEmail === "") {
+        const users = await userService.getAllUsers();
+        res.json({
+          user: users,
+          array: true,
+        });
+      } else {
+        const user = await userService.findUser(userEmail);
+        if (user) {
+          res.json({
+            user: user,
+            array: false,
+          });
+        } else {
+          res.status(404).json({
+            message: "User not found",
+          });
+        }
+      }
+    } catch (error) {
+      console.log("Error in findUser: ", error.message);
+      res.status(500).json({
+        message: errorMessage,
+      });
+    }
+  };
+  
 exports.deleteUser = async (req, res) => {
     try {
         const { userId } = req.body;  // Extract userId from the request body
@@ -148,3 +177,12 @@ exports.deleteUser = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
+exports.logOut = async (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        console.log("Error destroying session: ", err);
+        return res.redirect("/");
+      }
+      res.redirect("/login");
+    });
+  };

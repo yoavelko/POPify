@@ -46,6 +46,7 @@ const Navbar = ({ setQuery }) => {
           </Link>
           <ul>
             <li><Link to="/homepage">Products</Link></li>
+            <li><Link to="/Admin">admin</Link></li>
             {!user && <li><Link to="/login">Log In</Link></li>}
             <li><a href="#">Pop! Yourself</a></li>
           </ul>

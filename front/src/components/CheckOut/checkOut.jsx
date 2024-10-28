@@ -3,16 +3,19 @@ import { FaMinus, FaPlus } from "react-icons/fa";
 import { MdOutlineCancel } from "react-icons/md";
 import axios from 'axios';
 import './CheckOut.css';
+import { useUser } from '../../context/UserContext'; // שימוש נכון בהקשר המשתמש
 
+// פונקציה לחילוץ מזהה תמונה מגוגל דרייב
 function extractDriveFileId(link) {
   if (typeof link !== "string") return null;
   const match = link.match(/\/d\/([a-zA-Z0-9_-]+)\//);
   return match ? match[1] : null;
 }
 
-const userData = JSON.parse(localStorage.getItem('user'));
 const CheckOut = () => {
-  const userId = userData ? userData.id : null;
+  const { user } = useUser(); // קבלת נתוני משתמש מה-UserContext
+  const userId = user ? user.id : null;
+
   const [cartItems, setCartItems] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -26,7 +29,7 @@ const CheckOut = () => {
           ...item,
           id: item.id || `item-${index}`,
           quantity: Number(item.quantity) || 1,
-          price: Number(item.price) || 0
+          price: Number(item.price) || 0,
         }));
         setCartItems(validatedCart);
       } catch (error) {
@@ -51,19 +54,17 @@ const CheckOut = () => {
   }, [cartItems]);
 
   const updateQuantity = (targetId, delta) => {
-    setCartItems(prevCartItems => {
-      return prevCartItems.map(item => {
-        if (item.id === targetId) {
-          const newQuantity = Math.max(1, (item.quantity || 1) + delta);
-          return { ...item, quantity: newQuantity };
-        }
-        return item;
-      });
-    });
+    setCartItems((prevCartItems) =>
+      prevCartItems.map((item) =>
+        item.id === targetId
+          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
+          : item
+      )
+    );
   };
 
   const removeItem = (targetId) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== targetId));
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== targetId));
   };
 
   const handleCheckout = async (event) => {
@@ -77,18 +78,19 @@ const CheckOut = () => {
     setError('');
 
     const orderData = {
-      prodcutArr: cartItems.map(item => ({
-        id: item.id,
+      productArr: cartItems.map(item => ({
+        productId: item.id,
         name: item.name,
+        img: item.img, // העברת מערך התמונות
         price: item.price,
         quantity: item.quantity
       })),
-      userId: userId, // replace with actual user ID
+      userId: userId,
       status: "Pending",
       totalSum: subtotal,
-      address: "City, Street" // Update with actual address if needed
+      address: "City, Street"
     };
-
+    
     try {
       const response = await axios.post('http://localhost:3001/order/orders', orderData);
       alert('ההזמנה בוצעה בהצלחה');
@@ -97,7 +99,8 @@ const CheckOut = () => {
     } catch (error) {
       console.error('Error creating order:', error);
       setError('הייתה בעיה ביצירת ההזמנה. נסה שוב מאוחר יותר.');
-    } finally {
+    }
+     finally {
       setLoading(false);
     }
   };
@@ -108,7 +111,7 @@ const CheckOut = () => {
   return (
     <div className="shopping-cart-page">
       <h2>סל קניות</h2>
-      
+
       {cartItems.length === 0 ? (
         <div className="empty-cart-message">
           <p>סל הקניות שלך ריק</p>
@@ -129,7 +132,7 @@ const CheckOut = () => {
               </tr>
             </thead>
             <tbody>
-              {cartItems.map(item => (
+              {cartItems.map((item) => (
                 <tr key={item.id}>
                   <td className="product-info">
                     <img
@@ -147,17 +150,29 @@ const CheckOut = () => {
                   </td>
                   <td>₪{Number(item.price).toFixed(2)}</td>
                   <td className="quantity-control">
-                    <button onClick={() => updateQuantity(item.id, -1)} className="quantity-button" aria-label="הפחת כמות">
+                    <button
+                      onClick={() => updateQuantity(item.id, -1)}
+                      className="quantity-button"
+                      aria-label="הפחת כמות"
+                    >
                       <FaMinus size={12} />
                     </button>
                     <span className="quantity-display">{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item.id, 1)} className="quantity-button" aria-label="הוסף כמות">
+                    <button
+                      onClick={() => updateQuantity(item.id, 1)}
+                      className="quantity-button"
+                      aria-label="הוסף כמות"
+                    >
                       <FaPlus size={12} />
                     </button>
                   </td>
-                  <td>₪{(Number(item.price) * item.quantity).toFixed(2)}</td>
+                  <td>₪{(item.price * item.quantity).toFixed(2)}</td>
                   <td>
-                    <button className="remove-item" onClick={() => removeItem(item.id)} aria-label="הסר פריט">
+                    <button
+                      className="remove-item"
+                      onClick={() => removeItem(item.id)}
+                      aria-label="הסר פריט"
+                    >
                       <MdOutlineCancel size={18} />
                     </button>
                   </td>

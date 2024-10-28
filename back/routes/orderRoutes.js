@@ -1,17 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const Order = require('./orderSchema'); // Import your Order model
+const Order = require('../models/orderSchema');
 
-router.post('/orders', async (req, res) => {
-    try {
-        const orderData = req.body;
-        const newOrder = new Order(orderData);
-        await newOrder.save(); // Save the order in the database
-        res.status(201).send(newOrder); // Send back the created order
-    } catch (error) {
-        console.error('Error creating order:', error);
-        res.status(500).send('Server error');
-    }
+router.get('/orders/:id', async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).exec();
+    res.json(order);
+  } catch (error) {
+    res.status(500).send('Error fetching order');
+  }
 });
+
 
 module.exports = router;

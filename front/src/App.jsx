@@ -10,6 +10,8 @@ import Admin from './components/Admin/admin';
 import ProductManagement from './components/Admin/productA'; // ייבוא דף ניהול מוצרים
 import { CartProvider } from './components/cartIcon';
 import { UserProvider } from './context/UserContext';
+import MarketingPage from "./components/Marketing/MarketingPage"; // ייבוא עמוד השיווק
+
 
 function App() {
   return (
@@ -17,12 +19,13 @@ function App() {
       <CartProvider>
         <Navbar />
         <Routes>
-          <Route path='/' element={<Slider />} /> 
+          <Route path='/' element={<MarketingPage />} /> 
           <Route path='/homepage' element={<Homepage />} />
           <Route path='/login' element={<LogIn />} />
           <Route path='/CheckOut' element={<Checkout />} />
           <Route path='/Admin' element={<Admin />} />
           <Route path='/productA' element={<ProductManagement />} /> {/* דף ניהול מוצרים */}
+          <Route path="/marketing" element={<MarketingPage />} />
         </Routes>
         <Footer />
       </CartProvider>

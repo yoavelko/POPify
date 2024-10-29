@@ -81,7 +81,7 @@ const CheckOut = () => {
       productArr: cartItems.map(item => ({
         productId: item.id,
         name: item.name,
-        img: item.img, // העברת מערך התמונות
+        img: item.img,
         price: item.price,
         quantity: item.quantity
       })),
@@ -92,15 +92,16 @@ const CheckOut = () => {
     };
     
     try {
-      const response = await axios.post('http://localhost:3001/order/orders', orderData);
+      // שינוי הנתיב כדי להתאים לשרת
+      const response = await axios.post('http://localhost:3001/order', orderData);
+      console.log('Order created:', response.data);
       alert('ההזמנה בוצעה בהצלחה');
       setCartItems([]);
       localStorage.removeItem('cart');
     } catch (error) {
       console.error('Error creating order:', error);
       setError('הייתה בעיה ביצירת ההזמנה. נסה שוב מאוחר יותר.');
-    }
-     finally {
+    } finally {
       setLoading(false);
     }
   };

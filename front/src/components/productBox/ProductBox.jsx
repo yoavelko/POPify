@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import cookies from 'js-cookie';
 import { useCart } from '../cartIcon';
-import e from 'cors';
 
 function extractDriveFileId(link) {
     if (typeof link !== "string") {
@@ -19,21 +18,26 @@ function extractDriveFileId(link) {
     }
 }
 
-function ProductBox({ index, value }) {
+function ProductBox({ value, onEdit }) {
     const [hover, setHover] = useState(false);
     const { setCartItemCount } = useCart();
 
     useEffect(() => {
         const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-        setCartItemCount(storedCart.length); // עדכון מספר הפריטים מה-localStorage
+        setCartItemCount(storedCart.length);
     }, []);
 
     function addToCartFunc(value) {
         const userId = cookies.get("userId");
+        if (!userId) {
+            alert("User not logged in.");
+            return;
+        }
+
         const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
         storedCart.push(value);
-        localStorage.setItem('cart', JSON.stringify(storedCart)); // עדכון ה-localStorage
-        setCartItemCount(storedCart.length); // עדכון ה-state של הקונטקסט
+        localStorage.setItem('cart', JSON.stringify(storedCart));
+        setCartItemCount(storedCart.length);
 
         axios.patch(addToCart, {
             userId: userId,
@@ -50,6 +54,11 @@ function ProductBox({ index, value }) {
 
     function addToWishListFunc(value) {
         const userId = cookies.get("userId");
+        if (!userId) {
+            alert("User not logged in.");
+            return;
+        }
+
         axios.patch(addToWishList, {
             userId: userId,
             productId: value._id
@@ -63,16 +72,16 @@ function ProductBox({ index, value }) {
             });
     }
 
-    const imgIds = value.img.map(link => extractDriveFileId(link));
-    const imageUrl = hover
-        ? `https://drive.google.com/thumbnail?id=${imgIds[1]}`
-        : `https://drive.google.com/thumbnail?id=${imgIds[0]}`;
+    const imgIds = Array.isArray(value.img) && value.img.length > 0 
+        ? value.img.map(link => extractDriveFileId(link))
+        : [];
+    const imageUrl = imgIds.length > 0 
+        ? (hover ? `https://drive.google.com/thumbnail?id=${imgIds[1]}` : `https://drive.google.com/thumbnail?id=${imgIds[0]}`)
+        : "default-image-url.jpg"; // URL לתמונת ברירת מחדל
 
     return (
-        <div>
-            
         <div id='product-box-container' onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-            <img className='box-img' src={imageUrl} alt="None" />
+            <img className='box-img' src={imageUrl} alt="Product Image" />
             <div>{value.name}</div>
             <div>{value.category}</div>
             <div>{value.price} ₪</div>
@@ -80,7 +89,6 @@ function ProductBox({ index, value }) {
                 <button className="button" onClick={() => addToCartFunc(value)}>Cart</button>
                 <button className="button" onClick={() => addToWishListFunc(value)}>Wish</button>
             </div>
-        </div>
         </div>
     );
 }

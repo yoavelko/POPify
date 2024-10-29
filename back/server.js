@@ -20,6 +20,7 @@ app.get('/', (req, res) => {
   res.status(200).send('Hello world');
 });
 
+
 app.listen(3001, () => {
   console.log('server is alive');
 });

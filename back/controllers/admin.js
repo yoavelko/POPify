@@ -40,20 +40,19 @@ exports.createProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
     try {
-        const { productId } = req.body;  // Extract productId from the request body
+        const { id } = req.params;  // קבלת ה-id מתוך הנתיב במקום מגוף הבקשה
 
-        if (!productId) {
+        if (!id) {
             return res.status(400).json({ message: "Product ID is required" });
         }
 
-        // Find and delete the product by productId
-        const result = await Product.findByIdAndDelete(productId);
+        // מחיקת המוצר על פי id
+        const result = await Product.findByIdAndDelete(id);
 
         if (!result) {
             return res.status(404).json({ message: "Product not found" });
         }
 
-        // Respond with a success message
         res.status(200).json({
             message: "Product deleted successfully",
             deletedProduct: result
@@ -64,42 +63,37 @@ exports.deleteProduct = async (req, res) => {
     }
 };
 
-
 exports.updateProduct = async (req, res) => {
     try {
-        const { productId, name, img, price, category } = req.body;  // Extract fields from the request body
+        const { name, img, price, category } = req.body;  // שים לב שאין שימוש ב-req.body.productId
 
-        if (!productId) {
-            return res.status(400).json({ message: "Product ID is required" });
-        }
-
-        // Create an object with the fields to be updated
         const updateFields = {};
         if (name) updateFields.name = name;
         if (img) updateFields.img = img;
         if (price) updateFields.price = price;
         if (category) updateFields.category = category;
 
-        // Update the product by productId
-        const updatedProduct = await Product.findByIdAndUpdate(productId, updateFields, {
-            new: true,  // Return the updated document
-            runValidators: true  // Run schema validators
+        const updatedProduct = await Product.findByIdAndUpdate(req.params.id, updateFields, {
+            new: true,
+            runValidators: true
         });
 
         if (!updatedProduct) {
-            return res.status(404).json({ message: "Product not found" });
+            return res.status(404).json({ success: false, message: "Product not found" });
         }
 
-        // Respond with the updated product
         res.status(200).json({
+            success: true,
             message: "Product updated successfully",
             product: updatedProduct
         });
     } catch (error) {
         console.error("Error updating product:", error.message);
-        res.status(500).json({ message: "Server error", error: error.message });
+        res.status(500).json({ success: false, message: "Server error", error: error.message });
     }
 };
+
+
 
 
 exports.getAllUsers = async (req, res) => {

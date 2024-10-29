@@ -8,7 +8,7 @@ import { useUser } from '../../context/UserContext';
 
 function Homepage() {
     const [data, setData] = useState([]);
-    const { query } = useUser(); // שינוי מצבי החיפוש ל-string
+    const { query = "" } = useUser(); // בדיקה אם query מוגדר, אחרת ברירת מחדל ל-""
 
     useEffect(() => {
         if (!cookies.get("userId")) {
@@ -20,22 +20,22 @@ function Homepage() {
                 .then((res) => {
                     console.log('Response data:', res.data);
                     console.log('Products:', res.data.products);
-                    setData(res.data.products);
-                    cookies.set("products", JSON.stringify(res.data.products), { expires: 7 });
+                    setData(res.data.products || []); // ערך ברירת מחדל ל-data
+                    cookies.set("products", JSON.stringify(res.data.products || []), { expires: 7 });
                 })
                 .catch((err) => {
                     console.log('Error:', err);
                 });
         } else {
             const products = JSON.parse(cookies.get("products"));
-            setData(products);
+            setData(products || []);
         }
     }, []);
 
-    // מסנן את המוצרים לפי מילות החיפוש
-    const filteredProducts = data.filter(item =>
-        item.name.toLowerCase().includes(query.toLowerCase())
-    );
+    // מסנן את המוצרים לפי מילות החיפוש רק אם query הוא מחרוזת
+    const filteredProducts = Array.isArray(data)
+        ? data.filter(item => item.name && item.name.toLowerCase().includes(query.toLowerCase()))
+        : [];
 
     return (
         <div>

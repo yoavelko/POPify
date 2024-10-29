@@ -4,7 +4,7 @@ const productSchema = new mongoose.Schema({
     name: { type: String, required: true },
     img: { type: Array, required: true, unique: true },
     price: { type: Number, required: true , min:0},
-    category: { type: String, required: true, enum:['Marvel, DC, Disney'] },
+    category: { type: String, required: true, enum: ['Marvel', 'DC', 'Disney'] },
     numLikes: { type: Number, default:0}
 });
 

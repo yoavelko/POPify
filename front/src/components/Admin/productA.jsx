@@ -1,5 +1,11 @@
+// productA.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import ProductBox from '../productBox/ProductBox';
+import './productA.css';
+import { MdOutlineModeEdit } from "react-icons/md";
+import { AiOutlineDelete } from "react-icons/ai";
+import { IoAddCircleOutline } from "react-icons/io5";
 
 const ProductManagement = () => {
   const [products, setProducts] = useState([]);
@@ -7,28 +13,84 @@ const ProductManagement = () => {
   const [editMode, setEditMode] = useState(false);
   const [currentProductId, setCurrentProductId] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch all products on component mount
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/admin/products'); // פניה לנתיב הנכון
-
+        const response = await axios.get('http://localhost:3001/admin/products');
         setProducts(response.data.products);
       } catch (error) {
         console.error('Error fetching products:', error);
         setErrorMessage('Failed to load products.');
       }
     };
-
     fetchProducts();
   }, []);
+
+  const handleEdit = (product) => {
+    setFormData({ 
+      name: product.name, 
+      img: Array.isArray(product.img) ? product.img : [product.img], 
+      price: product.price, 
+      category: product.category 
+    });
+    setEditMode(true);
+    setCurrentProductId(product._id);
+    setIsModalOpen(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const url = `http://localhost:3001/admin/update-product/${currentProductId}`; 
+
+    try {
+        const response = await axios.patch(url, formData);
+        alert(response.data.message);
+
+        if (response.data.success) {
+            setProducts((prev) => prev.map((prod) => 
+                prod._id === currentProductId ? response.data.product : prod
+            ));
+        } else {
+            setErrorMessage("Failed to update product in the database.");
+        }
+
+        resetForm();
+        setIsModalOpen(false);
+    } catch (error) {
+        console.error('Error submitting form:', error);
+        setErrorMessage('Failed to submit form.');
+    }
+  };
+
+  const handleDelete = async (productId) => {
+    const url = `http://localhost:3001/admin/products/${productId}`;
+
+    try {
+        const response = await axios.delete(url);
+        alert(response.data.message);
+
+        if (response.status === 200) {
+            setProducts((prev) => prev.filter((prod) => prod._id !== productId));
+        }
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        setErrorMessage('Failed to delete product.');
+    }
+  };
+
+  const handleAddProduct = () => {
+    setFormData({ name: '', img: [], price: '', category: '' });
+    setEditMode(false);
+    setIsModalOpen(true);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: name === 'img' ? (Array.isArray(value) ? value : value.split(',')) : value,
+      [name]: name === 'img' ? value.split(',') : value,
     }));
   };
 
@@ -39,99 +101,76 @@ const ProductManagement = () => {
     setErrorMessage('');
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const url = editMode 
-      ? `http://localhost:3001/products/update/${currentProductId}` 
-      : `http://localhost:3001/products/create`;
-
-    try {
-      const method = editMode ? 'patch' : 'post';
-      const response = await axios[method](url, formData);
-      alert(response.data.message);
-
-      if (editMode) {
-        setProducts((prev) => prev.map((prod) => 
-          prod._id === currentProductId ? response.data.product : prod
-        ));
-      } else {
-        setProducts((prev) => [...prev, response.data.product]);
-      }
-
-      resetForm();
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      setErrorMessage('Failed to submit form.');
-    }
-  };
-
-  const handleEdit = (product) => {
-    setFormData({ name: product.name, img: product.img.join(','), price: product.price, category: product.category });
-    setEditMode(true);
-    setCurrentProductId(product._id);
-  };
-
-  const handleDelete = async (productId) => {
-    try {
-      const response = await axios.delete(`http://localhost:3001/products/${productId}`);
-      alert(response.data.message);
-      setProducts((prev) => prev.filter((product) => product._id !== productId));
-    } catch (error) {
-      console.error('Error deleting product:', error);
-      setErrorMessage('Failed to delete product.');
-    }
-  };
-
   return (
     <div className="product-management">
-      <h2>Product Management</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Product Name"
-          required
-        />
-        <input
-          type="text"
-          name="img"
-          value={formData.img.join(',')}
-          onChange={handleChange}
-          placeholder="Image URLs (comma-separated)"
-          required
-        />
-        <input
-          type="number"
-          name="price"
-          value={formData.price}
-          onChange={handleChange}
-          placeholder="Price"
-          required
-        />
-        <input
-          type="text"
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          placeholder="Category"
-          required
-        />
-        <button type="submit">{editMode ? 'Update Product' : 'Create Product'}</button>
-        <button type="button" onClick={resetForm}>Cancel</button>
-      </form>
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
-      <h3>Existing Products</h3>
-      <ul>
+      <div className="header">
+        <h2>Product Management</h2>
+        <button className="add-button" onClick={handleAddProduct}>
+          <IoAddCircleOutline size={24} /> Add Product
+        </button>
+      </div>
+
+      <div className="product-list">
         {products.map((product) => (
-          <li key={product._id}>
-            <span>{product.name} - ₪{product.price}</span>
-            <button onClick={() => handleEdit(product)}>Edit</button>
-            <button onClick={() => handleDelete(product._id)}>Delete</button>
-          </li>
+          <div className="product-item" key={product._id}>
+            <ProductBox value={product} />
+            <div className="product-actions">
+              <button type="button" onClick={() => handleEdit(product)}><MdOutlineModeEdit size={20} /> Edit</button>
+              <button type="button" onClick={() => handleDelete(product._id)}><AiOutlineDelete size={20} /> Delete</button>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
+
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={() => setIsModalOpen(false)}>&times;</span>
+            <h3>{editMode ? "Edit Product" : "Add New Product"}</h3>
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Product Name"
+                required
+                autoComplete="off"
+              />
+              <input
+                type="text"
+                name="img"
+                value={Array.isArray(formData.img) ? formData.img.join(',') : formData.img}
+                onChange={handleChange}
+                placeholder="Image URLs (comma-separated)"
+                required
+                autoComplete="off"
+              />
+              <input
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                placeholder="Price"
+                required
+                autoComplete="off"
+              />
+              <input
+                type="text"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                placeholder="Category"
+                required
+                autoComplete="off"
+              />
+              <button type="submit">{editMode ? "Save Changes" : "Add Product"}</button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
     </div>
   );
 };

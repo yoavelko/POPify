@@ -56,10 +56,13 @@
     display: flex;
     top: 85%;
     justify-content: center;
-    z-index: 200;
+    z-index: 1;
+    
 }
 .dot{
     cursor: pointer;
+    position: relative;
+    z-index: 1;
     height: 1rem;
     width: 1rem;
     margin: 0px 3px;

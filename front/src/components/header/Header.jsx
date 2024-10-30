@@ -1,39 +1,49 @@
 import './Header.css';
 import logo from '../../media/POPL.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { CgProfile } from "react-icons/cg";
 import { useCart } from '../cartIcon';
-import { RiProfileLine } from "react-icons/ri";
-import { CiLogout } from "react-icons/ci";
-import { IoBagCheckOutline } from "react-icons/io5";
-import React, { useEffect, useState } from 'react';
 import { PiShoppingCartSimpleBold } from "react-icons/pi";
 import { GoHeart } from "react-icons/go";
-import { useUser } from '../../context/UserContext'
+import React, { useState } from 'react';
+import { useUser } from '../../context/UserContext';
+import Login from '../login/Login';
 
-const Navbar = ({ setQuery }) => {
-  const { updateQuery } = useUser();
+const Navbar = () => {
+  const { updateQuery, query, user, logout, products } = useUser();
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const { cartItemCount } = useCart();
-  const [user, setUser] = useState(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsSubMenuOpen(!isSubMenuOpen);
   };
-  
-  const handleLogout = () => {
-    localStorage.removeItem('userToken'); // Adjust if the token is stored elsewhere
-    alert('You have been logged out successfully.');
-    window.location.href = '/login'; // Redirect to the login page or homepage
-};
 
-  // בדיקת סטטוס המשתמש ב-useEffect
-  useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
+  const openLoginModal = () => {
+    setIsLoginModalOpen(true);
+  };
+
+  const closeLoginModal = () => {
+    setIsLoginModalOpen(false);
+  };
+
+  const handleInputChange = (event) => {
+    const value = event.target.value;
+    updateQuery(value);
+    setShowSearchResults(value.length > 0); // הצגת תוצאות החיפוש רק אם יש טקסט
+  };
+
+  const handleProductClick = (name) => {
+    updateQuery(name); // עדכון השאילתה בשם המוצר שנבחר
+    setShowSearchResults(false); // סגירת חלונית תוצאות החיפוש
+    navigate('/homepage'); 
+  };
+
+  const filteredProducts = products.filter(item =>
+    item.name && item.name.toLowerCase().includes(query.toLowerCase())
+  );
 
   return (
     <nav>
@@ -46,68 +56,63 @@ const Navbar = ({ setQuery }) => {
           </Link>
           <ul>
             <li><Link to="/homepage">Products</Link></li>
-            <li><Link to="/Admin">admin</Link></li>
-            {!user && <li><Link to="/login">Log In</Link></li>}
+            <li><Link to="/Admin">Admin</Link></li>
             <li><a href="#">Pop! Yourself</a></li>
           </ul>
         </div>
 
         <div className="right">
-          {/* שדה החיפוש */}
           <input
             id="search-query"
             type="text"
             placeholder="Search..."
-            onChange={(event) => updateQuery(event.target.value)} // העברת מילות החיפוש
+            value={query} // הצגת השאילתה בשדה החיפוש
+            onChange={handleInputChange}
           />
-          <Link to="/CheckOut" className='header__link'>
-            <div className='header__optionBasket'>
-              <span className='header__optionLineTwo header__basketCount'>{cartItemCount}</span>
-            </div>
-          </Link>
-          <PiShoppingCartSimpleBold size={20} className='user-icon' />
-          <GoHeart className='user-icon' />
-          <CgProfile className='user-icon' onClick={toggleMenu} />
 
-          {/* תפריט משנה מותאם לפי סטטוס המשתמש */}
-          <div className={`sub-menu-wrap-pro ${isSubMenuOpen ? 'open' : 'closed'}`} id='subMenu'>
-            <div className='sub-menu-pro'>
-              <div className='user-info'>
-                <CgProfile className='form-icon' />
-                {user ? (
-                  <>
-                    <h3>{user.name} {user.lastName}</h3>
-                    <hr/>
-                    <Link className='sub-menu-link'>
-                      <RiProfileLine />
-                      <p>Edit Profile</p>
-                      <span> - </span>
-                    </Link>
-                    <Link className='sub-menu-link'>
-                      <IoBagCheckOutline />
-                      <p>Order History</p>
-                      <span> - </span>
-                    </Link>
-                    <Link className='sub-menu-link'>
-                      <CiLogout onClick={handleLogout}/>
-                      <p>Log-Out</p>
-                      <span> - </span>
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <p>Guest User</p>
-                    <hr />
-                    <Link className='sub-menu-link'>
-                      <CiLogout />
-                      <p>Log-in</p>
-                      <span> - </span>
-                    </Link>
-                  </>
-                )}
-              </div>
+          {/* חלונית תוצאות חיפוש */}
+          {showSearchResults && (
+            <div className="search-results">
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map((item, index) => (
+                  <div
+                    key={index}
+                    className="search-result-item"
+                    onClick={() => handleProductClick(item.name)}
+                  >
+                    {item.name}
+                  </div>
+                ))
+              ) : (
+                <p className="no-results">No products found.</p>
+              )}
             </div>
+          )}
+
+          <div className="icon-group">
+            <Link to="/CheckOut" className='header__link'>
+              <div className='header__optionBasket'>
+                <span className='header__optionLineTwo header__basketCount'>{cartItemCount}</span>
+              </div>
+            </Link>
+            <PiShoppingCartSimpleBold size={24} className='user-icon' />
+            <GoHeart size={24} className='user-icon' />
+            <CgProfile size={24} className='user-icon' onClick={user ? toggleMenu : openLoginModal} />
           </div>
+
+          {/* מודאל התחברות */}
+          {isLoginModalOpen && <Login closeLoginModal={closeLoginModal} />}
+
+          {/* תפריט פרופיל */}
+          {isSubMenuOpen && user && (
+            <div className="profile-menu">
+              <ul>
+                <li>Update Details</li>
+                <li>Order History</li>
+                <li onClick={logout}>Logout</li>
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </nav>

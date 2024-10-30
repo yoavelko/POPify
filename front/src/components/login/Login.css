@@ -1,205 +1,109 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background-color: #ffffff;
-    padding: 30px;
-    width: 450px;
-    border-radius: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-  
-  ::placeholder {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-  
-  .form button {
-    align-self: flex-end;
-  }
-  
-  .flex-column > label {
-    color: #151717;
-    font-weight: 600;
-  }
-  
-  .inputForm {
-    border: 1.5px solid #ecedec;
-    border-radius: 10px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    padding-left: 10px;
-    transition: 0.2s ease-in-out;
-  }
-  
-  .input {
-    margin-left: 10px;
-    border-radius: 10px;
-    border: none;
-    width: 100%;
-    height: 100%;
-  }
-  
-  .input:focus {
-    outline: none;
-  }
-  
-  .inputForm:focus-within {
-    border: 1.5px solid #2d79f3;
-  }
-  
-  .flex-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    justify-content: space-between;
-  }
-  
-  .flex-row > div > label {
-    font-size: 14px;
-    color: black;
-    font-weight: 400;
-  }
-  
-  .span {
-    font-size: 14px;
-    margin-left: 5px;
-    color: #2d79f3;
-    font-weight: 500;
-    cursor: pointer;
-  }
-  
-  .button-submit {
-    margin: 20px 0 10px 0;
-    background-color: #151717;
-    border: none;
-    color: white;
-    font-size: 15px;
-    font-weight: 500;
-    border-radius: 10px;
-    height: 50px;
-    width: 100%;
-    cursor: pointer;
-  }
-  
-  .p {
-    text-align: center;
-    color: black;
-    font-size: 14px;
-    margin: 5px 0;
-  }
-  
-  .btn {
-    margin-top: 10px;
-    width: 100%;
-    height: 50px;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 500;
-    gap: 10px;
-    border: 1px solid #ededef;
-    background-color: white;
-    cursor: pointer;
-    transition: 0.2s ease-in-out;
-  }
-  
-  .btn:hover {
-    border: 1px solid #2d79f3;
-    ;
-  }
-  
-      
-.content-wrapper {
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-    height: 100vh; 
-    width: 100vw;
-    margin-top: 10vh; /* גובה זהה ל-navbar */
+
+/* עיצוב כללי */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
-.content-wrapper {
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-    height: 100vh;
-    width: 100vw;
-}
-
-.login-section, .signup-section {
-    width: 300px;
-    margin: 20px; 
-    padding: 20px;
-    background-color: #f0f0f0;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(11, 5, 199, 0.874);
-}
-.input-group {
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: column; /* מיקום התווית מעל תיבת הטקסט */
-}
-
-label {
-    font-size: 12px;
-    margin-bottom: 5px; /* רווח בין התווית לתיבת הטקסט */
-    color: #666; 
+.modal-content {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 h2 {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700; /* עובי הכותרת */
-    border-radius: 8px;
-    padding: 20px; 
-    text-align: center; /* מרכז את הטקסט */
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+  text-align: left;
 }
 
-/* מלל כללי */
-label, input, button {
-    font-family: 'Arial', sans-serif;
-    font-size: 14px; 
-    color: #333;
+.input-group {
+  margin-bottom: 1rem;
 }
 
-label {
-    font-weight: normal;
-    margin-bottom: 5px;
-    display: block;
+.input-group label {
+  display: block;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.5rem;
 }
 
-input, button {
-    padding: 10px;
-    border: 1px solid #ccc; /* גבול עדין לתיבות הקלט */
-    border-radius: 4px; /* עיגול פינות */
-    width: 100%; 
-    box-sizing: border-box;
+.input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #333;
 }
 
-button {
-    background-color: #333; 
-    color: white; 
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3
+.input-group input::placeholder {
+  color: #aaa;
 }
 
-.checkbox-group {
-    display: inline-flex; /* שימוש ב-inline-flex כדי להימנע מתפיסת כל הרוחב */
-    align-items: center; /* יישור הכפתור והטקסט לגובה */
-    white-space: nowrap;
-    direction: ltr; /* שינוי כיוון האלמנטים לשמאל לימין */
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 
-.checkbox-group input[type="checkbox"] {
-    margin-right: 5px; /* רווח לכפתור */
-    margin-left: 0; /* ביטול מרווח בצד שמאל */
+/* עיצוב כפתור התחברות */
+.login-button, .signup-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+  text-align: center;
 }
 
-.checkbox-group label {
-    margin: 0; /* ביטול מרווחים נוספים */
-    font-size: 14px; /* התאמת גודל הטקסט לפי הצורך */
+.login-button:hover, .signup-button:hover {
+  background-color: #333;
+}
+
+/* עיצוב קישורים */
+.toggle-form, .forgot-password {
+  font-size: 0.9rem;
+  text-align: center;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.toggle-form span, .forgot-password a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.toggle-form span:hover, .forgot-password a:hover {
+  text-decoration: underline;
+}
+
+/* עיצוב שדה "זכור אותי" וקישור "שכחת סיסמה" */
+.extra-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.extra-options input[type="checkbox"] {
+  margin-right: 0.5rem;
 }

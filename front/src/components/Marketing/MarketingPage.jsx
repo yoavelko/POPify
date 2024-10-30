@@ -7,11 +7,6 @@ import pic5 from '../../media/pic5.png';
 import pic7 from '../../media/pic7.png';
 
 function MarketingPage() {
-  const { query, products } = useUser();
-
-  const filteredProducts = products.filter(item =>
-    item.name && item.name.toLowerCase().includes(query.toLowerCase())
-  );
 
   return (
     <div className="marketing-page">
@@ -42,13 +37,6 @@ function MarketingPage() {
           <img src={pic5} alt="Horror" className="sub-banner-image-2" />
         </div>
       </section>
-      {filteredProducts.length > 0 ? (
-        filteredProducts.map((value, index) => (
-          <ProductBox key={index} value={value} />
-        ))
-      ) : (
-        <p>No products available.</p>
-      )}
     </div>
   );
 }

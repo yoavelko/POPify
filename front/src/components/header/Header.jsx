@@ -14,6 +14,7 @@ const Navbar = () => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const { cartItemCount } = useCart();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false); // מצב פתיחת טופס עדכון
   const [showSearchResults, setShowSearchResults] = useState(false);
   const navigate = useNavigate();
 
@@ -27,6 +28,15 @@ const Navbar = () => {
 
   const closeLoginModal = () => {
     setIsLoginModalOpen(false);
+  };
+
+  const openUpdateModal = () => {
+    setIsUpdateModalOpen(true);
+    setIsSubMenuOpen(false); // סגירת תפריט משנה
+  };
+
+  const closeUpdateModal = () => {
+    setIsUpdateModalOpen(false);
   };
 
   const handleInputChange = (event) => {
@@ -103,11 +113,14 @@ const Navbar = () => {
           {/* מודאל התחברות */}
           {isLoginModalOpen && <Login closeLoginModal={closeLoginModal} />}
 
+          {/* מודאל עדכון פרטים */}
+          {isUpdateModalOpen && <Login closeLoginModal={closeUpdateModal} isUpdateMode={true} />}
+
           {/* תפריט פרופיל */}
           {isSubMenuOpen && user && (
             <div className="profile-menu">
               <ul>
-                <li>Update Details</li>
+                <li onClick={openUpdateModal}>Update Details</li>
                 <li>Order History</li>
                 <li onClick={logout}>Logout</li>
               </ul>

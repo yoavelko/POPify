@@ -1,16 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const { createProduct, deleteProduct, updateProduct, getAllUsers, deleteUser } = require('../controllers/admin');
+const { 
+  createProduct, 
+  deleteProduct, 
+  updateProduct, 
+  getAllUsers, 
+  deleteUser 
+} = require('../controllers/admin');
+const { auth, isAdmin } = require('../middlewares/auth'); // ייבוא ה-Middleware
 const Product = require('../models/productSchema'); // ודא שהמודל נטען בצורה נכונה
 
-router.post('/new-product', createProduct);
-router.delete('/products/:id', deleteProduct);
-router.patch('/update-product/:id', updateProduct);
-router.get('/users', getAllUsers);
-router.patch('/users/:id/delete', deleteUser);
+router.post('/new-product', auth, isAdmin, createProduct);
+router.delete('/products/:id', auth, isAdmin, deleteProduct);
+router.patch('/update-product/:id', auth, isAdmin, updateProduct);
+router.get('/users', auth, isAdmin, getAllUsers);
+router.patch('/users/:id/delete', auth, isAdmin, deleteUser);
 
-// הוספת נתיב GET לקבלת כל המוצרים
-router.get('/products', async (req, res) => {
+router.get('/products', auth, isAdmin, async (req, res) => {
   try {
     const products = await Product.find();
     res.status(200).json({ products });
@@ -18,5 +24,6 @@ router.get('/products', async (req, res) => {
     res.status(500).json({ message: 'Error fetching products', error });
   }
 });
+
 
 module.exports = router;

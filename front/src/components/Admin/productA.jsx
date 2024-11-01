@@ -1,4 +1,3 @@
-// productA.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ProductBox from '../productBox/ProductBox';
@@ -18,15 +17,28 @@ const ProductManagement = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/admin/products');
+        const token = localStorage.getItem("token"); // השגת הטוקן מ-localStorage
+  
+        if (!token) {
+          throw new Error("No token found"); // טיפול במקרה שאין טוקן
+        }
+  
+        const response = await axios.get('http://localhost:3001/admin/products', {
+          headers: {
+            'x-auth-token': token, // הוספת הטוקן ל-header
+          },
+        });
+  
         setProducts(response.data.products);
       } catch (error) {
         console.error('Error fetching products:', error);
         setErrorMessage('Failed to load products.');
       }
     };
+  
     fetchProducts();
   }, []);
+  
 
   const handleEdit = (product) => {
     setFormData({ 
@@ -42,41 +54,51 @@ const ProductManagement = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `http://localhost:3001/admin/update-product/${currentProductId}`; 
+    const url = `http://localhost:3001/admin/update-product/${currentProductId}`;
+    const token = localStorage.getItem("token"); // השגת הטוקן מ-localStorage
 
     try {
-        const response = await axios.patch(url, formData);
-        alert(response.data.message);
+      const response = await axios.patch(url, formData, {
+        headers: {
+          'x-auth-token': token, // הוספת הטוקן ל-header
+        },
+      });
+      alert(response.data.message);
 
-        if (response.data.success) {
-            setProducts((prev) => prev.map((prod) => 
-                prod._id === currentProductId ? response.data.product : prod
-            ));
-        } else {
-            setErrorMessage("Failed to update product in the database.");
-        }
+      if (response.data.success) {
+        setProducts((prev) => prev.map((prod) => 
+          prod._id === currentProductId ? response.data.product : prod
+        ));
+      } else {
+        setErrorMessage("Failed to update product in the database.");
+      }
 
-        resetForm();
-        setIsModalOpen(false);
+      resetForm();
+      setIsModalOpen(false);
     } catch (error) {
-        console.error('Error submitting form:', error);
-        setErrorMessage('Failed to submit form.');
+      console.error('Error submitting form:', error);
+      setErrorMessage('Failed to submit form.');
     }
   };
 
   const handleDelete = async (productId) => {
     const url = `http://localhost:3001/admin/products/${productId}`;
+    const token = localStorage.getItem("token"); // השגת הטוקן מ-localStorage
 
     try {
-        const response = await axios.delete(url);
-        alert(response.data.message);
+      const response = await axios.delete(url, {
+        headers: {
+          'x-auth-token': token, // הוספת הטוקן ל-header
+        },
+      });
+      alert(response.data.message);
 
-        if (response.status === 200) {
-            setProducts((prev) => prev.filter((prod) => prod._id !== productId));
-        }
+      if (response.status === 200) {
+        setProducts((prev) => prev.filter((prod) => prod._id !== productId));
+      }
     } catch (error) {
-        console.error('Error deleting product:', error);
-        setErrorMessage('Failed to delete product.');
+      console.error('Error deleting product:', error);
+      setErrorMessage('Failed to delete product.');
     }
   };
 
@@ -115,8 +137,12 @@ const ProductManagement = () => {
           <div className="product-item" key={product._id}>
             <ProductBox value={product} />
             <div className="product-actions">
-              <button type="button" onClick={() => handleEdit(product)}><MdOutlineModeEdit size={20} /> Edit</button>
-              <button type="button" onClick={() => handleDelete(product._id)}><AiOutlineDelete size={20} /> Delete</button>
+              <button type="button" onClick={() => handleEdit(product)}>
+                <MdOutlineModeEdit size={20} /> Edit
+              </button>
+              <button type="button" onClick={() => handleDelete(product._id)}>
+                <AiOutlineDelete size={20} /> Delete
+              </button>
             </div>
           </div>
         ))}

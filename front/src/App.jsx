@@ -11,7 +11,7 @@ import ProductManagement from './components/Admin/productA'; // ייבוא דף 
 import { CartProvider } from './components/cartIcon';
 import { UserProvider } from './context/UserContext';
 import MarketingPage from "./components/Marketing/MarketingPage"; // ייבוא עמוד השיווק
-
+import ProtectedRoute from './context/ProtectedRoute'; 
 
 function App() {
   return (
@@ -19,13 +19,22 @@ function App() {
       <CartProvider>
         <Navbar />
         <Routes>
+          {/* עמודים שאינם מוגנים */}
           <Route path='/' element={<MarketingPage />} /> 
           <Route path='/homepage' element={<Homepage />} />
           <Route path='/login' element={<LogIn />} />
           <Route path='/CheckOut' element={<Checkout />} />
-          <Route path='/Admin' element={<Admin />} />
-          <Route path='/productA' element={<ProductManagement />} /> {/* דף ניהול מוצרים */}
           <Route path="/marketing" element={<MarketingPage />} />
+
+          {/* עמודים מוגנים בעזרת ProtectedRoute */}
+          <Route path='/Admin'element={<ProtectedRoute><Admin />
+              </ProtectedRoute>
+            }
+          />
+          <Route path='/productA'element={<ProtectedRoute><ProductManagement />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
         <Footer />
       </CartProvider>

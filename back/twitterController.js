@@ -1,8 +1,10 @@
-require('dotenv').config({path: '../config'}); // טוען את משתני הסביבה
+require('dotenv').config({path:""}); // טוען את משתני הסביבה
 const { TwitterApi } = require('twitter-api-v2');
 
 // יצירת אינסטנס של TwitterApi עם המפתחות ממשתני הסביבה
 const client = new TwitterApi({
+  accessToken: process.env.TWITTER_ACCESS_TOKEN,
+  accessSecret: process.env.TWITTER_ACCESS_SECRET,
 
 });
 

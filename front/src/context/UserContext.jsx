@@ -3,17 +3,15 @@ import axios from 'axios';
 import cookies from 'js-cookie';
 import { getProducts } from '../utils/UserRoutes';
 
-// יצירת הקונטקסט
-const UserContext = createContext();
+export const UserContext = createContext(); // ייצוא ההקשר של המשתמש
 
-// יצירת hook מותאם אישית לשימוש בקונטקסט
-export const useUser = () => useContext(UserContext);
+export const useUser = () => useContext(UserContext); // ייצוא ה-Hook
 
-// ספק הקונטקסט לכל האפליקציה
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [query, setQuery] = useState("");
-  const [products, setProducts] = useState([]); // אחסון המוצרים
+  const [products, setProducts] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false); // מצב לבדיקת אם המשתמש הוא מנהל
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -39,19 +37,21 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      setIsAdmin(parsedUser.isAdmin || false); // בדיקה אם המשתמש הוא מנהל
     }
   }, []);
 
-  // פונקציה לעדכון המשתמש ושמירתו ב-localStorage
   const updateUser = (newUser) => {
     setUser(newUser);
+    setIsAdmin(newUser.isAdmin || false); // עדכון מצב המנהל
     localStorage.setItem('user', JSON.stringify(newUser));
   };
 
-  // פונקציה להתנתקות המשתמש
   const logout = () => {
     setUser(null);
+    setIsAdmin(false); // איפוס מצב המנהל
     localStorage.removeItem('user');
   };
 
@@ -60,7 +60,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, updateUser, logout, query, updateQuery,products }}>
+    <UserContext.Provider value={{ user, updateUser, logout, query, updateQuery, products, isAdmin }}>
       {children}
     </UserContext.Provider>
   );

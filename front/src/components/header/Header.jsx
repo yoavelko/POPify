@@ -10,7 +10,7 @@ import { useUser } from '../../context/UserContext';
 import Login from '../login/Login';
 
 const Navbar = () => {
-  const { updateQuery, query, user, logout, products } = useUser();
+  const { updateQuery, query, user, isAdmin, logout, products } = useUser();
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const { cartItemCount } = useCart();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -56,7 +56,10 @@ const Navbar = () => {
           </Link>
           <ul>
             <li><Link to="/homepage">Products</Link></li>
-            <li><Link to="/Admin">Admin</Link></li>
+            {/* הצגת קישור "Admin" רק אם המשתמש הוא מנהל */}
+            {user && isAdmin && (
+              <li><Link to="/Admin">Admin</Link></li>
+            )}
             <li><a href="#">Pop! Yourself</a></li>
           </ul>
         </div>
@@ -72,7 +75,7 @@ const Navbar = () => {
 
           {/* חלונית תוצאות חיפוש */}
           {showSearchResults && (
-            <div className="search-results">
+            <aside className="search-results">
               {filteredProducts.length > 0 ? (
                 filteredProducts.map((item, index) => (
                   <div
@@ -86,7 +89,7 @@ const Navbar = () => {
               ) : (
                 <p className="no-results">No products found.</p>
               )}
-            </div>
+            </aside>
           )}
 
           <div className="icon-group">
@@ -105,13 +108,13 @@ const Navbar = () => {
 
           {/* תפריט פרופיל */}
           {isSubMenuOpen && user && (
-            <div className="profile-menu">
+            <aside className="profile-menu">
               <ul>
                 <li>Update Details</li>
                 <li>Order History</li>
                 <li onClick={logout}>Logout</li>
               </ul>
-            </div>
+            </aside>
           )}
         </div>
       </div>

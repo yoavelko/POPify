@@ -6,7 +6,7 @@ const userRoute = require('./routes/userRoutes');
 const adminRoute = require('./routes/adminRoutes');
 const orderRoute = require('./routes/orderRoutes');
 const twitterRoutes = require('./routes/twitterRoutes');
-
+const { auth, isAdmin } = require('./middlewares/auth'); // ייבוא ה-Middleware
 
 mongoose.connect('mongodb+srv://yoavelkobi889:iVpnI4KHCxbmPS0M@cluster0.tkogcco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {})
   .then(() => console.log('Connected to mongoDB'))
@@ -14,15 +14,18 @@ mongoose.connect('mongodb+srv://yoavelkobi889:iVpnI4KHCxbmPS0M@cluster0.tkogcco.
 
 app.use(cors());
 app.use(express.json());
+
+// הגנה על נתיבי /admin
+app.use('/admin', auth, isAdmin, adminRoute); 
+
+// נתיבים אחרים
 app.use('/user', userRoute);
-app.use('/admin', adminRoute);
 app.use('/order', orderRoute);
 app.use('/api', twitterRoutes);
 
 app.get('/', (req, res) => {
   res.status(200).send('Hello world');
 });
-
 
 app.listen(3001, () => {
   console.log('server is alive');

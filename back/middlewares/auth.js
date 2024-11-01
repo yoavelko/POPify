@@ -7,8 +7,8 @@ const auth = (req, res, next) => {
   try {
     const jwtSecretKey = process.env.JWT_SECRET_KEY;
     const decoded = jwt.verify(token, jwtSecretKey);
-
     req.user = decoded;
+    
     next();
   } catch (ex) {
     res.status(400).send("Invalid auth token...");
@@ -36,5 +36,29 @@ const isAdmin = (req, res, next) => {
     }
   });
 };
+
+useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      const token = localStorage.getItem("token"); // השגת הטוקן מ-localStorage
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      const response = await axios.get('http://localhost:3001/admin/products', {
+        headers: {
+          'x-auth-token': token, // הוספת הטוקן ל-header
+        },
+      });
+
+      setProducts(response.data.products);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setErrorMessage('Failed to load products.');
+    }
+  };
+  fetchProducts();
+}, []);
+
 
 module.exports = { auth, isUser, isAdmin };

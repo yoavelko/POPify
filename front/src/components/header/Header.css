@@ -85,7 +85,7 @@ nav {
 }
 
 /* תפריט פרופיל */
-.profile-menu {
+aside.profile-menu {
     position: absolute;
     top: 60px;
     right: 10px;
@@ -121,8 +121,9 @@ nav {
 .profile-menu li svg {
     margin-right: 8px;
 }
+
 /* עיצוב חלונית תוצאות החיפוש */
-.search-results {
+aside.search-results {
     position: absolute;
     top: 100%;
     left: 0;
@@ -134,30 +135,29 @@ nav {
     max-height: 200px; /* גובה מקסימלי */
     overflow-y: auto; /* גלילה פנימית */
     z-index: 1000;
-  }
-  
-  /* עיצוב פריט תוצאה */
-  .search-result-item {
+}
+
+/* עיצוב פריט תוצאה */
+.search-result-item {
     display: flex;
     align-items: center;
     padding: 8px; /* הקטנת רווח פנימי */
     font-size: 0.85em; /* גודל טקסט קטן יותר */
     border-bottom: 1px solid #f0f0f0;
-  }
-  
-  .search-result-item img {
+}
+
+.search-result-item img {
     width: 24px; /* גודל תמונה קטן יותר */
     height: 24px;
     margin-right: 8px; /* רווח קטן בין התמונה לטקסט */
-  }
-  
-  .search-result-item:hover {
+}
+
+.search-result-item:hover {
     background-color: #f9f9f9;
-  }
-  
-  .no-results {
+}
+
+.no-results {
     padding: 8px;
     color: #999;
     font-size: 0.85em; /* גודל טקסט קטן */
-  }
-  
+}

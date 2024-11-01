@@ -5,6 +5,7 @@ import axios from 'axios';
 function Login({ closeLoginModal }) {
     const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
+    const [loginAdmin, setIsAdmin]=useState('')
     const [loginError, setLoginError] = useState('');
     const [user, setUser] = useState(null);
 
@@ -21,16 +22,27 @@ function Login({ closeLoginModal }) {
             const response = await axios.post('http://localhost:3001/user/login', {
                 email: loginEmail,
                 password: loginPassword,
+                loginAdmin: loginAdmin,
             });
     
             if (response.status === 200) {
                 alert('Login successful!');
-                const { name, lastName } = response.data.user;
-                setUser({ name, lastName });
-                localStorage.setItem('user', JSON.stringify({ name, lastName }));
+                const { token, user } = response.data;
+                setUser({lastName, isAdmin, });
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify( user));
+
+                // בדיקה אם המשתמש הוא מנהל
+                if (isAdmin) {
+                    alert('You are logged in as an Admin!');
+                    // ניתן לבצע כאן פעולות נוספות עבור מנהלים
+                } else {
+                    alert('You are logged in as a regular user.');
+                }
+    
                 closeLoginModal();
             }
-        
+    
         } catch (error) {
             console.error('Error logging in:', error);
             setLoginError('Login failed.');

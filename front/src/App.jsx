@@ -1,17 +1,18 @@
+import React from 'react';
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Homepage from './components/homepage/Homepage';
-import Slider from './components/Gallery/Slider';
 import Navbar from './components/header/Header';
 import Footer from './components/footer/Footer';
 import LogIn from './components/login/Login';
 import Checkout from './components/CheckOut/checkOut';
 import Admin from './components/Admin/admin';
-import ProductManagement from './components/Admin/productA'; // ייבוא דף ניהול מוצרים
+import ProductManagement from './components/Admin/productA'; // Product Management Page
 import { CartProvider } from './components/cartIcon';
 import { UserProvider } from './context/UserContext';
-import MarketingPage from "./components/Marketing/MarketingPage"; // ייבוא עמוד השיווק
+import MarketingPage from './components/Marketing/MarketingPage'; // Marketing Page
 import ProtectedRoute from './context/ProtectedRoute'; 
+import UserAdmin from './components/Admin/usersAdmin'; // Corrected Import
 
 function App() {
   return (
@@ -19,19 +20,35 @@ function App() {
       <CartProvider>
         <Navbar />
         <Routes>
-          {/* עמודים שאינם מוגנים */}
+          {/* Public Pages */}
           <Route path='/' element={<MarketingPage />} /> 
           <Route path='/homepage' element={<Homepage />} />
           <Route path='/login' element={<LogIn />} />
           <Route path='/CheckOut' element={<Checkout />} />
           <Route path="/marketing" element={<MarketingPage />} />
 
-          {/* עמודים מוגנים בעזרת ProtectedRoute */}
-          <Route path='/Admin'element={<ProtectedRoute><Admin />
+          {/* Protected Pages */}
+          <Route
+            path='/Admin'
+            element={
+              <ProtectedRoute>
+                <Admin />
               </ProtectedRoute>
             }
           />
-          <Route path='/productA'element={<ProtectedRoute><ProductManagement />
+          <Route
+            path='/productA'
+            element={
+              <ProtectedRoute>
+                <ProductManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/usersAdmin'
+            element={
+              <ProtectedRoute>
+                <UserAdmin />
               </ProtectedRoute>
             }
           />

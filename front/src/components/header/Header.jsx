@@ -17,6 +17,7 @@ const Navbar = () => {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const navigate = useNavigate();
 
+  
   const toggleMenu = () => {
     setIsSubMenuOpen(!isSubMenuOpen);
   };
@@ -44,6 +45,7 @@ const Navbar = () => {
   const filteredProducts = products.filter(item =>
     item.name && item.name.toLowerCase().includes(query.toLowerCase())
   );
+  
 
   return (
     <nav>

@@ -12,11 +12,10 @@ const {
     removeFromWishList, 
     getProducts 
 } = require('../controllers/user');
-const {auth, isUser, isAdmin}=require('../middlewares/auth');
 
 router.post('/login', login);
 router.post('/', createNewUser);
-router.put('/update-user', auth ,updateUser);
+router.put('/update-user', updateUser);
 router.patch('/add-to-cart', addToCart);
 router.patch('/remove-from-cart', removeFromCart);
 router.post('/search-product', searchProducts);

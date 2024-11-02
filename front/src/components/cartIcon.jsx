@@ -1,4 +1,3 @@
-// CartContext.js
 import axios from "axios";
 import cookies from "js-cookie";
 import React, { createContext, useContext, useState, useEffect } from 'react';

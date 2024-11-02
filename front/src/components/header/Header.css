@@ -83,6 +83,23 @@ nav {
     cursor: pointer;
     font-size: 24px;
 }
+.cart-icon {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.cart-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+}
+
 
 /* תפריט פרופיל */
 aside.profile-menu {

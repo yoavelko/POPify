@@ -47,7 +47,8 @@ export const UserProvider = ({ children }) => {
     setUser(newUser);
     setIsAdmin(newUser.isAdmin || false); // עדכון מצב המנהל
     localStorage.setItem('user', JSON.stringify(newUser));
-  };
+    cookies.set("userId", newUser.id, { expires: 7 }); // שמירה של userId בעוגיה ל-7 ימים
+  };  
 
   const logout = () => {
     setUser(null);

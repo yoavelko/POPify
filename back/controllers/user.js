@@ -27,7 +27,7 @@ exports.login = async (req, res) => {
           id: user._id, 
           email: user.email, 
           name: user.name, 
-          isAdmin: user.isAdmin // הוספת שדה isAdmin בתגובה
+          isAdmin: isAdmin // הוספת שדה isAdmin בתגובה
         }
       });
     } catch (error) {

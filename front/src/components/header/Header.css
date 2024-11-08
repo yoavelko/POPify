@@ -178,3 +178,36 @@ aside.search-results {
     color: #999;
     font-size: 0.85em; /* גודל טקסט קטן */
 }
+.wishlist-popup {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+  
+  .wishlist-popup h3 {
+    margin-top: 0;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .wishlist-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .wishlist-item img {
+    margin-right: 10px;
+  }
+  
+  .no-results {
+    font-size: 14px;
+    color: #777;
+  }
+  

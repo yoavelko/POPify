@@ -9,15 +9,18 @@ import Checkout from './components/CheckOut/checkOut';
 import Admin from './components/Admin/admin';
 import ProductManagement from './components/Admin/productA'; // Product Management Page
 import { CartProvider } from './components/cartIcon';
+import { WishlistProvider } from './components/heartIcon';
 import { UserProvider } from './context/UserContext';
 import MarketingPage from './components/Marketing/MarketingPage'; // Marketing Page
 import ProtectedRoute from './context/ProtectedRoute'; 
 import UserAdmin from './components/Admin/usersAdmin'; // Corrected Import
+import Wish from './components/WishList/WishList';
 
 function App() {
   return (
     <UserProvider>
       <CartProvider>
+        <WishlistProvider>
         <Navbar />
         <Routes>
           {/* Public Pages */}
@@ -26,7 +29,7 @@ function App() {
           <Route path='/login' element={<LogIn />} />
           <Route path='/CheckOut' element={<Checkout />} />
           <Route path="/marketing" element={<MarketingPage />} />
-
+          <Route path="/WishList" element={<Wish />} />
           {/* Protected Pages */}
           <Route
             path='/Admin'
@@ -54,6 +57,7 @@ function App() {
           />
         </Routes>
         <Footer />
+        </WishlistProvider>
       </CartProvider>
     </UserProvider>
   );

@@ -3,15 +3,16 @@ import axios from 'axios';
 import cookies from 'js-cookie';
 import { getProducts } from '../utils/UserRoutes';
 
-export const UserContext = createContext(); // ייצוא ההקשר של המשתמש
+export const UserContext = createContext();
 
-export const useUser = () => useContext(UserContext); // ייצוא ה-Hook
+export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [wishlist, setWishlist] = useState([]);
   const [query, setQuery] = useState("");
   const [products, setProducts] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false); // מצב לבדיקת אם המשתמש הוא מנהל
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -33,26 +34,28 @@ export const UserProvider = ({ children }) => {
     fetchProducts();
   }, []);
 
-  // טעינת המשתמש מה-localStorage כשהאפליקציה עולה
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
-      setIsAdmin(parsedUser.isAdmin || false); // בדיקה אם המשתמש הוא מנהל
+      setIsAdmin(parsedUser.isAdmin || false);
+      setWishlist(parsedUser.wishList || []);
     }
   }, []);
 
   const updateUser = (newUser) => {
     setUser(newUser);
-    setIsAdmin(newUser.isAdmin || false); // עדכון מצב המנהל
+    setIsAdmin(newUser.isAdmin || false);
+    setWishlist(newUser.wishList || []);
     localStorage.setItem('user', JSON.stringify(newUser));
-    cookies.set("userId", newUser.id, { expires: 7 }); // שמירה של userId בעוגיה ל-7 ימים
-  };  
+    cookies.set("userId", newUser.id, { expires: 7 });
+  };
 
   const logout = () => {
     setUser(null);
-    setIsAdmin(false); // איפוס מצב המנהל
+    setIsAdmin(false);
+    setWishlist([]);
     localStorage.removeItem('user');
   };
 
@@ -60,8 +63,29 @@ export const UserProvider = ({ children }) => {
     setQuery(newQuery);
   };
 
+  const addToWishList = async (productId) => {
+    if (!user || !user.id) {
+      console.error("User is not logged in");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:3001/wishlist", {
+        userId: user.id,
+        productId
+      });
+      const updatedWishList = response.data.wishList;
+      setUser((prevUser) => ({ ...prevUser, wishList: updatedWishList }));
+      setWishlist(updatedWishList);
+      localStorage.setItem('user', JSON.stringify({ ...user, wishList: updatedWishList }));
+      console.log(response.data.message);
+    } catch (error) {
+      console.error("Error adding product to wishlist:", error.response?.data?.message || error.message);
+    }
+  };
+
   return (
-    <UserContext.Provider value={{ user, updateUser, logout, query, updateQuery, products, isAdmin }}>
+    <UserContext.Provider value={{ user, updateUser, logout, query, updateQuery, products, isAdmin, wishlist, addToWishList }}>
       {children}
     </UserContext.Provider>
   );

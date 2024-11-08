@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { useUser } from '../../context/UserContext'; // ייבוא ההקשר של המשתמש
 import ProductBox from '../productBox/ProductBox';
 import './productA.css';
 import { MdOutlineModeEdit } from "react-icons/md";
@@ -7,43 +7,13 @@ import { AiOutlineDelete } from "react-icons/ai";
 import { IoAddCircleOutline } from "react-icons/io5";
 
 const ProductManagement = () => {
-  const [products, setProducts] = useState([]);
+  const { products, isAdmin } = useUser(); // שימוש במוצרים ובמצב מנהל מההקשר
   const [formData, setFormData] = useState({ name: '', img: [], price: '', category: '' });
   const [editMode, setEditMode] = useState(false);
   const [currentProductId, setCurrentProductId] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const token = localStorage.getItem("token"); // Retrieve the token from localStorage
   
-        if (!token) {
-          // Handle the case when the token is missing
-          throw new Error("No token found");
-        }
-  
-        const response = await axios.get('http://localhost:3001/admin/products', {
-          headers: {
-            'x-auth-token': token, // Add the token to the request header
-          },
-        });
-  
-        setProducts(response.data.products);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setErrorMessage('Failed to load products. Please log in again.');
-        // You can redirect the user to a login page if needed
-        // window.location.href = '/login';
-      }
-    };
-  
-    fetchProducts();
-  }, []);
-  
-
   const handleEdit = (product) => {
     setFormData({ 
       name: product.name, 
@@ -59,12 +29,12 @@ const ProductManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = `http://localhost:3001/admin/update-product/${currentProductId}`;
-    const token = localStorage.getItem("token"); // השגת הטוקן מ-localStorage
+    const token = localStorage.getItem("token");
 
     try {
       const response = await axios.patch(url, formData, {
         headers: {
-          'x-auth-token': token, // הוספת הטוקן ל-header
+          'x-auth-token': token,
         },
       });
       alert(response.data.message);
@@ -87,12 +57,12 @@ const ProductManagement = () => {
 
   const handleDelete = async (productId) => {
     const url = `http://localhost:3001/admin/products/${productId}`;
-    const token = localStorage.getItem("token"); // השגת הטוקן מ-localStorage
+    const token = localStorage.getItem("token");
 
     try {
       const response = await axios.delete(url, {
         headers: {
-          'x-auth-token': token, // הוספת הטוקן ל-header
+          'x-auth-token': token,
         },
       });
       alert(response.data.message);
@@ -131,18 +101,18 @@ const ProductManagement = () => {
     <div className="product-management">
       <div className="header">
         <h2>Product Management</h2>
-        <button className="add-button" onClick={handleAddProduct}>
-          <IoAddCircleOutline size={24} /> Add Product
-        </button>
+        {isAdmin && (
+          <button className="add-button" onClick={handleAddProduct}>
+            <IoAddCircleOutline size={24} /> Add Product
+          </button>
+        )}
       </div>
 
-      {isLoading ? (
-        <p>Loading products...</p>
-      ) : (
-        <div className="product-list">
-          {products.map((product) => (
-            <div className="product-item" key={product._id}>
-              <ProductBox value={product} />
+      <div className="product-list">
+        {products.map((product) => (
+          <div className="product-item" key={product._id}>
+            <ProductBox value={product} />
+            {isAdmin && (
               <div className="product-actions">
                 <button type="button" onClick={() => handleEdit(product)}>
                   <MdOutlineModeEdit size={20} /> Edit
@@ -151,10 +121,10 @@ const ProductManagement = () => {
                   <AiOutlineDelete size={20} /> Delete
                 </button>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            )}
+          </div>
+        ))}
+      </div>
 
       {isModalOpen && (
         <div className="modal">
@@ -172,4 +142,5 @@ const ProductManagement = () => {
     </div>
   );
 };
+
 export default ProductManagement;

@@ -4,10 +4,10 @@ const Order = require('../models/orderSchema');
 const { createOrder } = require('../controllers/order');
 
 // יצירת הזמנה חדשה
-router.post('/order', createOrder);
+router.post('/', createOrder);
 
 // קבלת הזמנה לפי מזהה
-router.get('/orders/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).exec();
     if (!order) {

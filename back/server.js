@@ -29,5 +29,3 @@ app.get('/', (req, res) => {
 app.listen(3001, () => {
   console.log('server is alive');
 });
-
-/// also before you run this make - npm i, npm i cors

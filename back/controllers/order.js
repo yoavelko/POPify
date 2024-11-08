@@ -1,5 +1,5 @@
 const User = require('../models/userSchema');
-const Order = require('../models/orderSchema');
+const Order = require('../models/orderSchema'); // ודא שאתה מייבא את סכימת Order שהגדרת
 
 exports.createOrder = async (req, res) => {
   try {
@@ -10,7 +10,7 @@ exports.createOrder = async (req, res) => {
     }
 
     const newOrder = new Order({
-      productArr,
+      productArr,  // כאן אתה מוסיף ישירות את מערך המוצרים מבלי להגדיר מחדש
       userId,
       status,
       totalSum,
@@ -19,6 +19,7 @@ exports.createOrder = async (req, res) => {
 
     const savedOrder = await newOrder.save();
 
+    // עדכון היסטוריית המשתמש
     await User.findByIdAndUpdate(
       userId,
       { $push: { history: savedOrder._id } },
@@ -34,6 +35,7 @@ exports.createOrder = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 exports.updateOrderStatus = async (req, res) => {
     try {

@@ -1,3 +1,4 @@
+const cors = require('cors'); // that what i added
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -6,11 +7,11 @@ const adminRoute = require('./routes/adminRoutes');
 const orderRoute = require('./routes/orderRoutes');
 const twitterRoutes = require('./routes/twitterRoutes');
 
+app.use(cors()) // that what i added
 mongoose.connect('mongodb+srv://yoavelkobi889:iVpnI4KHCxbmPS0M@cluster0.tkogcco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {})
   .then(() => console.log('Connected to mongoDB'))
   .catch(err => console.log(err));
 
-app.use(cors());
 app.use(express.json());
 
 // הגנה על נתיבי /admin
@@ -28,3 +29,5 @@ app.get('/', (req, res) => {
 app.listen(3001, () => {
   console.log('server is alive');
 });
+
+/// also before you run this make - npm i, npm i cors

@@ -3,18 +3,20 @@ import logo from '../../media/POPL.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { CgProfile } from "react-icons/cg";
 import { useCart } from '../cartIcon';
-import { useWishlist } from '../heartIcon'; // ייבוא WishlistContext
+import { useWishlist } from '../heartIcon';
 import { PiShoppingCartSimpleBold } from "react-icons/pi";
 import { GoHeart } from "react-icons/go";
 import React, { useState } from 'react';
 import { useUser } from '../../context/UserContext';
 import Login from '../login/Login';
+import { useCurrency } from '../../context/CurrencyContext'; // ייבוא CurrencyContext
 
 const Navbar = () => {
   const { updateQuery, query, user, isAdmin, logout, products } = useUser();
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const { cartItemCount } = useCart();
   const { wishlistItemCount } = useWishlist(); // שימוש ב-WishlistContext
+  const { currency, toggleCurrency } = useCurrency(); // שימוש בקונטקסט המטבע
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const navigate = useNavigate();
@@ -91,6 +93,11 @@ const Navbar = () => {
               )}
             </aside>
           )}
+
+          {/* כפתור להמרת מטבעות */}
+          <button onClick={toggleCurrency} className="currency-toggle-button">
+            {currency === "ILS" ? "Switch to USD" : "Switch to ILS"}
+          </button>
 
           <div className="icon-group">
             <Link to="/CheckOut" className='header__link'>

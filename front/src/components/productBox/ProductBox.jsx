@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import cookies from 'js-cookie';
 import { useCart } from '../cartIcon';
-import { useWishlist } from '../heartIcon'; // ייבוא WishlistContext
-import { useCurrency } from '../../context/CurrencyContext'; // ייבוא CurrencyContext להמרת מטבעות
+import { useWishlist } from '../heartIcon';
+import { useCurrency } from '../../context/CurrencyContext'; // ייבוא CurrencyContext
 
 function extractDriveFileId(link) {
     if (typeof link !== "string") {
@@ -18,9 +18,9 @@ function extractDriveFileId(link) {
 function ProductBox({ index, value }) {
     const [hover, setHover] = useState(false);
     const { setCartItemCount } = useCart();
-    const { addToWishlist } = useWishlist(); // ייבוא הפונקציה מהקונטקסט
-    const { currency, toggleCurrency, convertPrice } = useCurrency(); // שימוש בקונטקסט המטבע
-
+    const { addToWishlist } = useWishlist();
+    const { currency, convertPrice } = useCurrency(); // גישה למטבע הנבחר ולפונקציה להמרת המחיר
+    
     useEffect(() => {
         const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
         setCartItemCount(storedCart.length);
@@ -74,7 +74,8 @@ function ProductBox({ index, value }) {
         ? `https://drive.google.com/thumbnail?id=${imgIds[1]}`
         : `https://drive.google.com/thumbnail?id=${imgIds[0]}`;
     
-    const convertedPrice = convertPrice(value.price); // המרת המחיר בהתאם למטבע הנבחר
+    // שימוש ב-`convertPrice` להצגת המחיר במטבע הנבחר
+    const convertedPrice = convertPrice(value.price);
 
     return (
         <div id='product-box-container' onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
@@ -82,9 +83,6 @@ function ProductBox({ index, value }) {
             <div>{value.name}</div>
             <div>{value.category}</div>
             <div>{convertedPrice} {currency === "ILS" ? "₪" : "$"}</div>
-            <button className="button-currency-toggle" onClick={toggleCurrency}>
-                {currency === "ILS" ? "Show in USD" : "Show in ILS"}
-            </button>
             <div className='product-buttons-container'>
                 <button className="button" onClick={() => addToCartFunc(value)}>Cart</button>
                 <button className="button" onClick={() => handleAddToWishlist(value)}>Wish</button>

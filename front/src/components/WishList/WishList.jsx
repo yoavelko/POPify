@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useCurrency } from '../../context/CurrencyContext'; // ייבוא הקונטקסט של המטבע
 
 function extractDriveFileId(link) {
     if (typeof link !== "string") return null;
@@ -7,12 +8,18 @@ function extractDriveFileId(link) {
 }
 
 const WishlistPage = () => {
+    const { currency, exchangeRate } = useCurrency(); // שימוש בקונטקסט של המטבע
     const [wishlistItems, setWishlistItems] = useState([]);
 
     useEffect(() => {
         // שליפת רשימת המשאלות מ-localStorage
-        const storedWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-        setWishlistItems(storedWishlist);
+        const storedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        // וידוא שכל ערך במחיר הוא מספרי
+        const validatedWishlist = storedWishlist.map(item => ({
+            ...item,
+            price: Number(item.price) || 0 // המרת price למספר או 0 אם חסר ערך
+        }));
+        setWishlistItems(validatedWishlist);
     }, []);
 
     return (
@@ -21,9 +28,12 @@ const WishlistPage = () => {
             {wishlistItems.length > 0 ? (
                 <div className="wishlist-items">
                     {wishlistItems.map((item) => {
-                        // הפקת מזהה התמונה מתוך הקישור
                         const imgId = extractDriveFileId(item.image);
                         const imageUrl = imgId ? `https://drive.google.com/thumbnail?id=${imgId}` : '';
+                        // אם המטבע הוא דולר, המרת המחיר; אחרת הצגת המחיר המקורי
+                        const displayPrice = currency === 'USD' 
+                            ? (item.price * exchangeRate).toFixed(2) 
+                            : item.price.toFixed(2);
 
                         return (
                             <div key={item._id} className="wishlist-item">
@@ -31,7 +41,7 @@ const WishlistPage = () => {
                                     <img src={imageUrl} alt={item.name} />
                                 )}
                                 <h3>{item.name}</h3>
-                                <p>{item.price} ₪</p>
+                                <p>{currency === 'ILS' ? '₪' : '$'}{displayPrice}</p>
                             </div>
                         );
                     })}

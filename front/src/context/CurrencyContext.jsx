@@ -1,43 +1,35 @@
-// context/CurrencyContext.js
+// CurrencyContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
 
 const CurrencyContext = createContext();
 
-export const useCurrency = () => useContext(CurrencyContext);
-
 export const CurrencyProvider = ({ children }) => {
-    const [currency, setCurrency] = useState("ILS"); // סוג המטבע שנבחר (ILS או USD)
-    const [exchangeRate, setExchangeRate] = useState(1); // שער ההמרה מדולר לשקל
+    const [currency, setCurrency] = useState('ILS');
+    const [exchangeRate, setExchangeRate] = useState(1); // 1 by default for ILS
 
-    useEffect(() => {
-        const fetchExchangeRate = async () => {
-            if (currency === "USD") {
-                try {
-                    const response = await axios.get('https://api.exchangerate-api.com/v4/latest/ILS');
-                    setExchangeRate(response.data.rates.USD);
-                } catch (error) {
-                    console.error("Error fetching exchange rate:", error);
-                }
-            } else {
-                setExchangeRate(1); // שער ההמרה בשקלים
+    const toggleCurrency = async () => {
+        if (currency === 'ILS') {
+            // קריאה ל-API לקבלת שער ההמרה, דוגמה ל-API פומבי
+            try {
+                const response = await fetch('https://api.exchangerate-api.com/v4/latest/ILS');
+                const data = await response.json();
+                setExchangeRate(data.rates.USD); // שמירת שער ההמרה לדולר
+                console.log("Updated exchange rate:", data.rates.USD); // בדיקת שער ההמרה בקונסול
+                setCurrency('USD');
+            } catch (error) {
+                console.error("Failed to fetch exchange rate", error);
             }
-        };
-
-        fetchExchangeRate();
-    }, [currency]);
-
-    const toggleCurrency = () => {
-        setCurrency((prevCurrency) => (prevCurrency === "ILS" ? "USD" : "ILS"));
-    };
-
-    const convertPrice = (priceILS) => {
-        return currency === "USD" ? (priceILS * exchangeRate).toFixed(2) : priceILS;
+        } else {
+            setExchangeRate(1); // חזרה לשקל
+            setCurrency('ILS');
+        }
     };
 
     return (
-        <CurrencyContext.Provider value={{ currency, toggleCurrency, convertPrice }}>
+        <CurrencyContext.Provider value={{ currency, exchangeRate, toggleCurrency }}>
             {children}
         </CurrencyContext.Provider>
     );
 };
+
+export const useCurrency = () => useContext(CurrencyContext);

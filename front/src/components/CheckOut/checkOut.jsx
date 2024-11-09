@@ -3,9 +3,9 @@ import { FaMinus, FaPlus } from "react-icons/fa";
 import { MdOutlineCancel } from "react-icons/md";
 import axios from 'axios';
 import './CheckOut.css';
-import { useUser } from '../../context/UserContext'; // שימוש נכון בהקשר המשתמש
+import { useUser } from '../../context/UserContext'; 
+import { useCurrency } from '../../context/CurrencyContext'; // ייבוא קונטקסט המטבע
 
-// פונקציה לחילוץ מזהה תמונה מגוגל דרייב
 function extractDriveFileId(link) {
   if (typeof link !== "string") return null;
   const match = link.match(/\/d\/([a-zA-Z0-9_-]+)\//);
@@ -13,9 +13,10 @@ function extractDriveFileId(link) {
 }
 
 const CheckOut = () => {
-  const { user } = useUser(); // קבלת נתוני משתמש מה-UserContext
+  const { user } = useUser();
   const userId = user ? user.id : null;
-
+  
+  const { currency, exchangeRate } = useCurrency(); // שימוש בקונטקסט של המטבע
   const [cartItems, setCartItems] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -92,7 +93,6 @@ const CheckOut = () => {
     };
     
     try {
-      // שינוי הנתיב כדי להתאים לשרת
       const response = await axios.post('http://localhost:3001/order', orderData);
       console.log('Order created:', response.data);
       alert('ההזמנה בוצעה בהצלחה');
@@ -133,52 +133,62 @@ const CheckOut = () => {
               </tr>
             </thead>
             <tbody>
-              {cartItems.map((item) => (
-                <tr key={item.id}>
-                  <td className="product-info">
-                    <img
-                      src={`https://drive.google.com/thumbnail?id=${extractDriveFileId(item.img?.[0]) || ''}`}
-                      alt={item.name}
-                      className="item-image"
-                      onError={(e) => {
-                        e.target.src = '/placeholder-image.jpg';
-                      }}
-                    />
-                    <div className="product-details">
-                      <div className="product-name">{item.name}</div>
-                      {item.size && <div className="product-size">מידה: {item.size}</div>}
-                    </div>
-                  </td>
-                  <td>₪{Number(item.price).toFixed(2)}</td>
-                  <td className="quantity-control">
-                    <button
-                      onClick={() => updateQuantity(item.id, -1)}
-                      className="quantity-button"
-                      aria-label="הפחת כמות"
-                    >
-                      <FaMinus size={12} />
-                    </button>
-                    <span className="quantity-display">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item.id, 1)}
-                      className="quantity-button"
-                      aria-label="הוסף כמות"
-                    >
-                      <FaPlus size={12} />
-                    </button>
-                  </td>
-                  <td>₪{(item.price * item.quantity).toFixed(2)}</td>
-                  <td>
-                    <button
-                      className="remove-item"
-                      onClick={() => removeItem(item.id)}
-                      aria-label="הסר פריט"
-                    >
-                      <MdOutlineCancel size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {cartItems.map((item) => {
+                const itemPrice = currency === 'USD' 
+                  ? (item.price * exchangeRate).toFixed(2) 
+                  : item.price.toFixed(2);
+
+                const itemTotal = currency === 'USD' 
+                  ? (item.price * item.quantity * exchangeRate).toFixed(2) 
+                  : (item.price * item.quantity).toFixed(2);
+
+                return (
+                  <tr key={item.id}>
+                    <td className="product-info">
+                      <img
+                        src={`https://drive.google.com/thumbnail?id=${extractDriveFileId(item.img?.[0]) || ''}`}
+                        alt={item.name}
+                        className="item-image"
+                        onError={(e) => {
+                          e.target.src = '/placeholder-image.jpg';
+                        }}
+                      />
+                      <div className="product-details">
+                        <div className="product-name">{item.name}</div>
+                        {item.size && <div className="product-size">מידה: {item.size}</div>}
+                      </div>
+                    </td>
+                    <td>{currency === 'ILS' ? '₪' : '$'}{itemPrice}</td>
+                    <td className="quantity-control">
+                      <button
+                        onClick={() => updateQuantity(item.id, -1)}
+                        className="quantity-button"
+                        aria-label="הפחת כמות"
+                      >
+                        <FaMinus size={12} />
+                      </button>
+                      <span className="quantity-display">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.id, 1)}
+                        className="quantity-button"
+                        aria-label="הוסף כמות"
+                      >
+                        <FaPlus size={12} />
+                      </button>
+                    </td>
+                    <td>{currency === 'ILS' ? '₪' : '$'}{itemTotal}</td>
+                    <td>
+                      <button
+                        className="remove-item"
+                        onClick={() => removeItem(item.id)}
+                        aria-label="הסר פריט"
+                      >
+                        <MdOutlineCancel size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 
@@ -186,19 +196,19 @@ const CheckOut = () => {
             <div className="summary-details">
               <div className="summary-row">
                 <span>סך ביניים:</span>
-                <span>₪{subtotal.toFixed(2)}</span>
+                <span>{currency === 'ILS' ? '₪' : '$'}{(subtotal * (currency === 'USD' ? exchangeRate : 1)).toFixed(2)}</span>
               </div>
               <div className="summary-row">
                 <span>משלוח:</span>
-                <span>{shipping === 0 ? 'חינם' : `₪${shipping.toFixed(2)}`}</span>
+                <span>{shipping === 0 ? 'חינם' : `${currency === 'ILS' ? '₪' : '$'}${(shipping * (currency === 'USD' ? exchangeRate : 1)).toFixed(2)}`}</span>
               </div>
               <div className="summary-row total">
                 <span>סה"כ לתשלום:</span>
-                <span>₪{total.toFixed(2)}</span>
+                <span>{currency === 'ILS' ? '₪' : '$'}{(total * (currency === 'USD' ? exchangeRate : 1)).toFixed(2)}</span>
               </div>
               {subtotal < 200 && (
                 <div className="free-shipping-message">
-                  חסרים לך ₪{(200 - subtotal).toFixed(2)} למשלוח חינם!
+                  חסרים לך {currency === 'ILS' ? '₪' : '$'}{((200 - subtotal) * (currency === 'USD' ? exchangeRate : 1)).toFixed(2)} למשלוח חינם!
                 </div>
               )}
             </div>

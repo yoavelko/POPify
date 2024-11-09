@@ -5,7 +5,7 @@ import axios from 'axios';
 import cookies from 'js-cookie';
 import { useCart } from '../cartIcon';
 import { useWishlist } from '../heartIcon';
-import { useCurrency } from '../../context/CurrencyContext'; // ייבוא CurrencyContext
+import { useCurrency } from '../../context/CurrencyContext';
 
 function extractDriveFileId(link) {
     if (typeof link !== "string") {
@@ -19,8 +19,8 @@ function ProductBox({ index, value }) {
     const [hover, setHover] = useState(false);
     const { setCartItemCount } = useCart();
     const { addToWishlist } = useWishlist();
-    const { currency, convertPrice } = useCurrency(); // גישה למטבע הנבחר ולפונקציה להמרת המחיר
-    
+    const { currency, convertPrice } = useCurrency();
+
     useEffect(() => {
         const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
         setCartItemCount(storedCart.length);
@@ -74,7 +74,6 @@ function ProductBox({ index, value }) {
         ? `https://drive.google.com/thumbnail?id=${imgIds[1]}`
         : `https://drive.google.com/thumbnail?id=${imgIds[0]}`;
     
-    // שימוש ב-`convertPrice` להצגת המחיר במטבע הנבחר
     const convertedPrice = convertPrice(value.price);
 
     return (

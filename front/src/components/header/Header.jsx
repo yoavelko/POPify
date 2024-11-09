@@ -94,30 +94,45 @@ const Navbar = () => {
             </aside>
           )}
 
-          {/* כפתור להמרת מטבעות */}
-          <button onClick={toggleCurrency} className="currency-toggle-button">
-            {currency === "ILS" ? "Switch to USD" : "Switch to ILS"}
-          </button>
+         
 
-          <div className="icon-group">
-            <Link to="/CheckOut" className='header__link'>
-              <div className='header__optionBasket'>
-                <span className='header__optionLineTwo header__basketCount'>{cartItemCount}</span>
-              </div>
-            </Link>
-            <PiShoppingCartSimpleBold size={24} className='user-icon' />
+    <div className="icon-group">
+      <Link to="/CheckOut" className="icon-container">
+        <PiShoppingCartSimpleBold size={24} className="icon" />
+        {cartItemCount > 0 && (
+          <span className="counter">{cartItemCount}</span>
+        )}
+      </Link>
 
-            {/* קישור ל-Wishlist */}
-            <div className='header__wishlist'>
-              <Link to="/wishlist" className='header__link'> {/* נתיב לדף ה-Wishlist */}
-                <GoHeart size={24} className='user-icon' />
-                <span className='header__optionLineTwo header__wishlistCount'>{wishlistItemCount}</span>
-              </Link>
-            </div>
+      <Link to="/wishlist" className="icon-container">
+        <GoHeart size={24} className="icon" />
+        {wishlistItemCount > 0 && (
+          <span className="counter">{wishlistItemCount}</span>
+        )}
+      </Link>
+   
 
             <CgProfile size={24} className='user-icon' onClick={user ? toggleMenu : openLoginModal} />
           </div>
-
+ {/* כפתור להמרת מטבעות */}
+ <button
+      onClick={toggleCurrency}
+      className="currency-toggle"
+    >
+      <span className="currency-content">
+        {currency === "ILS" ? (
+          <>
+            <span className="currency-symbol">₪</span>
+            <span className="currency-flag">🇮🇱</span>
+          </>
+        ) : (
+          <>
+            <span className="currency-symbol">$</span>
+            <span className="currency-flag">🇺🇸</span>
+          </>
+        )}
+      </span>
+    </button>
           {isLoginModalOpen && <Login closeLoginModal={closeLoginModal} />}
 
           {isSubMenuOpen && user && (
@@ -130,7 +145,7 @@ const Navbar = () => {
             </aside>
           )}
         </div>
-      </div>
+        </div>
     </nav>
   );
 };

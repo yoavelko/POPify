@@ -76,30 +76,42 @@ nav {
     display: flex;
     align-items: center;
     gap: 15px;
-}
-
-.user-icon {
     color: #fff;
-    cursor: pointer;
-    font-size: 24px;
-}
-.cart-icon {
+  }
+  
+  .icon-container {
     position: relative;
-    display: inline-block;
-    cursor: pointer;
-}
-
-.cart-count {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background-color: red;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: white;
-    border-radius: 50%;
-    padding: 2px 6px;
+  }
+  
+  .icon {
+    transition: color 0.3s ease;
+  }
+  
+  .icon:hover {
+    color: #e0e0e0;
+  }
+  
+  .counter {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #1e90ff; /* כחול בהיר */
+    color: white;
     font-size: 12px;
-}
-
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    padding: 0 4px;
+    border: 2px solid black; /* מסגרת שחורה שתתאים לרקע */
+  }
 
 /* תפריט פרופיל */
 aside.profile-menu {
@@ -211,3 +223,35 @@ aside.search-results {
     color: #777;
   }
   
+  .currency-toggle {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    padding: 6px 12px;
+    margin-right: 20px;
+    color: white;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .currency-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .currency-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .currency-symbol {
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  
+  .currency-flag {
+    font-size: 1.2rem;
+  }

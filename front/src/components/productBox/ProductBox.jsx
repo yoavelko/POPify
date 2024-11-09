@@ -5,24 +5,21 @@ import axios from 'axios';
 import cookies from 'js-cookie';
 import { useCart } from '../cartIcon';
 import { useWishlist } from '../heartIcon'; // ייבוא WishlistContext
+import { useCurrency } from '../../context/CurrencyContext'; // ייבוא CurrencyContext להמרת מטבעות
 
 function extractDriveFileId(link) {
     if (typeof link !== "string") {
-        throw new Error("Input must be a string");
-    }
-    const match = link.match(/\/d\/([a-zA-Z0-9_-]+)\//);
-    if (match && match[1]) {
-        return match[1];
-    } else {
-        console.error("Invalid Google Drive link format.");
         return null;
     }
+    const match = link.match(/\/d\/([a-zA-Z0-9_-]+)\//);
+    return match ? match[1] : null;
 }
 
 function ProductBox({ index, value }) {
     const [hover, setHover] = useState(false);
     const { setCartItemCount } = useCart();
     const { addToWishlist } = useWishlist(); // ייבוא הפונקציה מהקונטקסט
+    const { currency, toggleCurrency, convertPrice } = useCurrency(); // שימוש בקונטקסט המטבע
 
     useEffect(() => {
         const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -50,24 +47,25 @@ function ProductBox({ index, value }) {
     }
 
     function handleAddToWishlist(value) {
-        addToWishlist(value); // קריאה לפונקציה מ-WishlistContext כדי לעדכן את ה-Wishlist
         const userId = cookies.get("userId");
         const storedWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-        storedWishlist.push(value);
-        localStorage.setItem('wishlist', JSON.stringify(storedWishlist));
-        setCartItemCount(storedWishlist.length);
 
-
+        if (!storedWishlist.some(item => item._id === value._id)) {
+            storedWishlist.push(value);
+            localStorage.setItem('wishlist', JSON.stringify(storedWishlist));
+            addToWishlist(value);
+        }
+        
         axios.patch(addToWishList, {
             userId: userId,
             productId: value._id
         })
         .then((res) => {
-            console.log(res);
+            console.log(res.data);
             alert("Product added to wishlist");
         })
         .catch((err) => {
-            console.error("Error adding to wishlist:", err);
+            console.error("Error adding to wishlist:", err.response?.data || err.message);
         });
     }
 
@@ -75,13 +73,18 @@ function ProductBox({ index, value }) {
     const imageUrl = hover
         ? `https://drive.google.com/thumbnail?id=${imgIds[1]}`
         : `https://drive.google.com/thumbnail?id=${imgIds[0]}`;
+    
+    const convertedPrice = convertPrice(value.price); // המרת המחיר בהתאם למטבע הנבחר
 
     return (
         <div id='product-box-container' onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
             <img className='box-img' src={imageUrl} alt="None" />
             <div>{value.name}</div>
             <div>{value.category}</div>
-            <div>{value.price} ₪</div>
+            <div>{convertedPrice} {currency === "ILS" ? "₪" : "$"}</div>
+            <button className="button-currency-toggle" onClick={toggleCurrency}>
+                {currency === "ILS" ? "Show in USD" : "Show in ILS"}
+            </button>
             <div className='product-buttons-container'>
                 <button className="button" onClick={() => addToCartFunc(value)}>Cart</button>
                 <button className="button" onClick={() => handleAddToWishlist(value)}>Wish</button>
@@ -89,6 +92,5 @@ function ProductBox({ index, value }) {
         </div>
     );
 }
-
 
 export default ProductBox;

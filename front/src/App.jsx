@@ -15,9 +15,11 @@ import MarketingPage from './components/Marketing/MarketingPage'; // Marketing P
 import ProtectedRoute from './context/ProtectedRoute'; 
 import UserAdmin from './components/Admin/usersAdmin'; // Corrected Import
 import Wish from './components/WishList/WishList';
+import { CurrencyProvider } from './context/CurrencyContext';
 
 function App() {
   return (
+    <CurrencyProvider>
     <UserProvider>
       <CartProvider>
         <WishlistProvider>
@@ -60,6 +62,7 @@ function App() {
         </WishlistProvider>
       </CartProvider>
     </UserProvider>
+    </CurrencyProvider>
   );
 }
 

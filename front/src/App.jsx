@@ -15,6 +15,7 @@ import MarketingPage from './components/Marketing/MarketingPage'; // Marketing P
 import ProtectedRoute from './context/ProtectedRoute'; 
 import UserAdmin from './components/Admin/usersAdmin'; // Corrected Import
 import Wish from './components/WishList/WishList';
+import Contact from './components/Contact/Contact';
 import { CurrencyProvider } from './context/CurrencyContext';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
           <Route path='/CheckOut' element={<Checkout />} />
           <Route path="/marketing" element={<MarketingPage />} />
           <Route path="/WishList" element={<Wish />} />
+          <Route path="/contact" element={<Contact />} />
           {/* Protected Pages */}
           <Route
             path='/Admin'

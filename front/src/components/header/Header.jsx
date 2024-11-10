@@ -63,7 +63,7 @@ const Navbar = () => {
             {user && isAdmin && (
               <li><Link to="/Admin">Admin</Link></li>
             )}
-            <li><a href="#">Pop! Yourself</a></li>
+            <Link to='/contact'><li>Contact Us</li></Link>
           </ul>
         </div>
 

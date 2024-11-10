@@ -40,8 +40,9 @@ function Login({ closeLoginModal }) {
                 } else {
                     alert('You are logged in as a regular user.');
                 }
-    
+                
                 closeLoginModal();
+                window.location.reload();
             }
         } catch (error) {
             console.error('Error logging in:', error);

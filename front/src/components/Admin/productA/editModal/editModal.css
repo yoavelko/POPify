@@ -1,0 +1,32 @@
+.edit-modal-container {
+    line-height: 56px;
+}
+
+.edit-line-flexer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.edit-input {
+    height: 60%;
+    position: relative;
+    top: 8px;
+    margin-left: 2px;
+}
+
+.edit-inline-flexer {
+    display: flex;
+    align-items: center;
+}
+
+.submit-btn {
+    border-radius: 3px;
+    border: none;
+    height: 36px;
+    top: 8px;
+    position: relative;
+    width: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

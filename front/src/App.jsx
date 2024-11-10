@@ -7,13 +7,13 @@ import Footer from './components/footer/Footer';
 import LogIn from './components/login/Login';
 import Checkout from './components/CheckOut/checkOut';
 import Admin from './components/Admin/admin';
-import ProductManagement from './components/Admin/productA'; // Product Management Page
+import ProductManagement from './components/Admin/productA/productA'; // Product Management Page
 import { CartProvider } from './components/cartIcon';
 import { WishlistProvider } from './components/heartIcon';
 import { UserProvider } from './context/UserContext';
 import MarketingPage from './components/Marketing/MarketingPage'; // Marketing Page
 import ProtectedRoute from './context/ProtectedRoute'; 
-import UserAdmin from './components/Admin/usersAdmin'; // Corrected Import
+import UserAdmin from './components/Admin/userAdmin/usersAdmin';
 import Wish from './components/WishList/WishList';
 import Contact from './components/Contact/Contact';
 import { CurrencyProvider } from './context/CurrencyContext';

@@ -66,7 +66,6 @@ const CheckOut = () => {
 
   const removeItem = (targetId) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== targetId));
-    console.log(cartItems);
   };
 
   const handleCheckout = async (event) => {

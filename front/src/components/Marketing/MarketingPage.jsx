@@ -5,6 +5,7 @@ import "./MarketingPage.css";
 import pic from '../../media/fire.png';
 import pic5 from '../../media/pic5.png';
 import pic7 from '../../media/pic7.png';
+import VideoFile from '../../media/orsula.mp4';
 
 function MarketingPage() {
   const { query, products } = useUser();
@@ -15,6 +16,8 @@ function MarketingPage() {
 
   return (
     <div className="marketing-page">
+      
+
       <section className="main-banner">
         <div className="banner-content">
           <img src={pic7} alt="Gyutaro" className="banner-image" />
@@ -26,6 +29,9 @@ function MarketingPage() {
         </div>
       </section>
       <Slider />
+      <div className="video-banner">
+        <video src={VideoFile} autoPlay loop muted className="background-video" />
+      </div>
       <section className="sub-banners">
         <div className="sub-banner red-banner">
           <div className="sub-banner-info">

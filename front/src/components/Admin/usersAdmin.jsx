@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './usersAdmin.css'; // Ensure you have appropriate styles
+import { getUsers } from '../../utils/AdminRoutes';
 
 const UserAdmin = () => {
   // State variables
@@ -19,8 +20,10 @@ const UserAdmin = () => {
   // Function to fetch all users
   const getAllUsers = async () => {
     try {
-      const response = await axios.get('/user/users');
+      const response = await axios.get(getUsers);
       setUsers(response.data.users);
+      console.log(response.data.users);
+      
       } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -276,11 +279,11 @@ const UserAdmin = () => {
 
       {/* Users List */}
       <div className="users-container">
-        {users.map((user) => (
+        {users && users.map((user) => (
             <div className="user-box" key={user.email}>
               <div className="name-box">
                 <p>
-                  <span>{user.firstName}</span> <span>{user.lastName}</span>
+                  <span>{user.name}</span> <span>{user.lastName}</span>
                 </p>
               </div>
               <p><strong>Email:</strong><br />{user.email}</p>

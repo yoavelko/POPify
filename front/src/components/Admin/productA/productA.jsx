@@ -1,18 +1,26 @@
 import React, { useState } from 'react';
-import { useUser } from '../../context/UserContext'; // ייבוא ההקשר של המשתמש
-import ProductBox from '../productBox/ProductBox';
+import { useUser } from '../../../context/UserContext'; // ייבוא ההקשר של המשתמש
+import ProductBox from '../../productBox/ProductBox';
 import './productA.css';
 import { MdOutlineModeEdit } from "react-icons/md";
 import { AiOutlineDelete } from "react-icons/ai";
 import { IoAddCircleOutline } from "react-icons/io5";
+import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
+import EditModal from './editModal/editModal';
+import NewModal from './NewModal/NewModal';
 
 const ProductManagement = () => {
   const { products, isAdmin } = useUser(); // שימוש במוצרים ובמצב מנהל מההקשר
   const [formData, setFormData] = useState({ name: '', img: [], price: '', category: '' });
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState({
+    mode: false,
+    product: null
+  });
   const [currentProductId, setCurrentProductId] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  isModalOpen ? disableBodyScroll(document) : enableBodyScroll(document)
   
   const handleEdit = (product) => {
     setFormData({ 
@@ -21,7 +29,10 @@ const ProductManagement = () => {
       price: product.price, 
       category: product.category 
     });
-    setEditMode(true);
+    setEditMode({
+      mode: true,
+      product: product
+    });
     setCurrentProductId(product._id);
     setIsModalOpen(true);
   };
@@ -130,7 +141,7 @@ const ProductManagement = () => {
         <div className="modal">
           <div className="modal-content">
             <span className="close" onClick={() => setIsModalOpen(false)}>&times;</span>
-            <h3>{editMode ? "Edit Product" : "Add New Product"}</h3>
+            <div>{editMode.mode ? <EditModal product={editMode.product}/> : <NewModal/>}</div>
             <form onSubmit={handleSubmit}>
               {/* Form inputs remain unchanged */}
             </form>

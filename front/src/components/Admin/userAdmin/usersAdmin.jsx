@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './usersAdmin.css'; // Ensure you have appropriate styles
-import { getUsers } from '../../utils/AdminRoutes';
+import { getUsers } from '../../../utils/AdminRoutes';
+import Maps from './Maps/Maps';
+import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
 
 const UserAdmin = () => {
   // State variables
@@ -13,6 +15,9 @@ const UserAdmin = () => {
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
+  const [marked, setMarked] = useState(null);
+
+  isModalOpen ? disableBodyScroll(document) : enableBodyScroll(document)
 
   useEffect(() => {
     getAllUsers();
@@ -22,24 +27,23 @@ const UserAdmin = () => {
     try {
       const response = await axios.get(getUsers);
       setUsers(response.data.users);
-      console.log(response.data.users);
-      
-      } catch (error) {
+
+    } catch (error) {
       console.error('Error fetching users:', error);
     }
   };
 
-    // Form state for add/update
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        adress: '',
-        admin: false,
-        delete: false,
-      });
-  
+  // Form state for add/update
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    adress: '',
+    admin: false,
+    delete: false,
+  });
+
   // Function to display messages
   const createMessage = (text, isError = false) => {
     setMessage({ text, isError });
@@ -277,35 +281,76 @@ const UserAdmin = () => {
         <button type="button" onClick={openAddModal}>Add New User</button>
       </form>
 
+      <div className='maps-container'>
+        <Maps
+          users={users}
+          setMarked={setMarked} />
+        <div className='marked-space-holder'>
+          {
+            marked && (
+              <div className="user-box" key={marked.email} style={{ transform: 'scale(1.2)' }}>
+                <div className="name-box">
+                  <p className='marked-name-close-flexer'>
+                    <div>
+                      <span>{marked.name}</span> <span>{marked.lastName}</span>
+                    </div>
+                    <button className='marked-close' onClick={() => setMarked(null)}>X</button>
+                  </p>
+                </div>
+                <p><strong>Email:</strong><br />{marked.email}</p>
+                <p><strong>Admin:</strong> <span>{marked.admin ? 'Yes' : 'No'}</span></p>
+                <p><strong>Deleted:</strong> <span>{marked.delete ? 'Yes' : 'No'}</span></p>
+                <div className="user-actions">
+                  <button onClick={() => openUpdateModal(marked)}>Update User</button>
+                  <button onClick={() => deleteUser(marked.email)}>Delete User</button>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      localStorage.setItem('userFullName', `${marked.firstName} ${marked.lastName}`);
+                      localStorage.setItem('userId', user._id);
+                      window.location.href = '/ordersUserAdmin';
+                    }}
+                  >
+                    Orders
+                  </a>
+                </div>
+              </div>
+            )
+          }
+        </div>
+        <div></div>
+      </div>
+
       {/* Users List */}
       <div className="users-container">
         {users && users.map((user) => (
-            <div className="user-box" key={user.email}>
-              <div className="name-box">
-                <p>
-                  <span>{user.name}</span> <span>{user.lastName}</span>
-                </p>
-              </div>
-              <p><strong>Email:</strong><br />{user.email}</p>
-              <p><strong>Admin:</strong> <span>{user.admin ? 'Yes' : 'No'}</span></p>
-              <p><strong>deleted:</strong> <span>{user.delete ? 'Yes' : 'No'}</span></p>
-              <div className="user-actions">
-                <button onClick={() => openUpdateModal(user)}>Update User</button>
-                <button onClick={() => deleteUser(user.email)}>Delete User</button>
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    localStorage.setItem('userFullName', `${user.firstName} ${user.lastName}`);
-                    localStorage.setItem('userId', user._id);
-                    window.location.href = '/ordersUserAdmin';
-                  }}
-                >
-                  Orders
-                </a>
-              </div>
+          <div className="user-box" key={user.email}>
+            <div className="name-box">
+              <p>
+                <span>{user.name}</span> <span>{user.lastName}</span>
+              </p>
             </div>
-          ))
+            <p><strong>Email:</strong><br />{user.email}</p>
+            <p><strong>Admin:</strong> <span>{user.admin ? 'Yes' : 'No'}</span></p>
+            <p><strong>Deleted:</strong> <span>{user.delete ? 'Yes' : 'No'}</span></p>
+            <div className="user-actions">
+              <button onClick={() => openUpdateModal(user)}>Update User</button>
+              <button onClick={() => deleteUser(user.email)}>Delete User</button>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  localStorage.setItem('userFullName', `${user.firstName} ${user.lastName}`);
+                  localStorage.setItem('userId', user._id);
+                  window.location.href = '/ordersUserAdmin';
+                }}
+              >
+                Orders
+              </a>
+            </div>
+          </div>
+        ))
         }
       </div>
 
@@ -320,7 +365,7 @@ const UserAdmin = () => {
                 <input
                   type="text"
                   name="firstName"
-                  value={formData.firstName}
+                  value={formData.name}
                   onChange={handleInputChange}
                   required
                 />

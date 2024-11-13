@@ -139,7 +139,9 @@ const Navbar = () => {
             <aside className="profile-menu">
               <ul>
                 <li>Update Details</li>
+                <Link to="/orders">
                 <li>Order History</li>
+                </Link>
                 <li onClick={logout}>Logout</li>
               </ul>
             </aside>

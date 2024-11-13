@@ -1,0 +1,23 @@
+.order-history {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .order-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .order-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+  }
+  
+  .error-message {
+    color: red;
+  }
+  

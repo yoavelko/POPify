@@ -110,3 +110,22 @@ exports.getOrder= async (req, res) => {
   }
 };
 
+exports.getUserOrders = async (req, res) => {
+  try {
+    const userId = req.query.id; // שים לב ל-id מה-query, לא מ-body
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    const orders = await Order.find({ userId }).exec();
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: 'No orders found for this user' });
+    }
+    
+    res.json({ orders });
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ message: "Error fetching orders", error: error.message });
+  }
+};
+

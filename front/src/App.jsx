@@ -7,6 +7,7 @@ import Footer from './components/footer/Footer';
 import LogIn from './components/login/Login';
 import Checkout from './components/CheckOut/checkOut';
 import Admin from './components/Admin/admin';
+import OrderHistory from './components/userOrders/Orders';
 import ProductManagement from './components/Admin/productA/productA'; // Product Management Page
 import { CartProvider } from './components/cartIcon';
 import { WishlistProvider } from './components/heartIcon';
@@ -34,6 +35,7 @@ function App() {
           <Route path="/marketing" element={<MarketingPage />} />
           <Route path="/WishList" element={<Wish />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/orders" element={<OrderHistory />} />
           {/* Protected Pages */}
           <Route
             path='/Admin'

@@ -9,20 +9,30 @@ import { GoHeart } from "react-icons/go";
 import React, { useState } from 'react';
 import { useUser } from '../../context/UserContext';
 import Login from '../login/Login';
-import { useCurrency } from '../../context/CurrencyContext'; // ייבוא CurrencyContext
+import EditUserModal from '../login/editUserModal';
+import { useCurrency } from '../../context/CurrencyContext';
 
 const Navbar = () => {
   const { updateQuery, query, user, isAdmin, logout, products } = useUser();
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const { cartItemCount } = useCart();
-  const { wishlistItemCount } = useWishlist(); // שימוש ב-WishlistContext
-  const { currency, toggleCurrency } = useCurrency(); // שימוש בקונטקסט המטבע
+  const { wishlistItemCount } = useWishlist();
+  const { currency, toggleCurrency } = useCurrency();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsSubMenuOpen(!isSubMenuOpen);
+  };
+
+  const toggleEditModal = () => {
+    setIsEditModalOpen((prev) => !prev);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
   };
 
   const openLoginModal = () => {
@@ -94,60 +104,63 @@ const Navbar = () => {
             </aside>
           )}
 
-         
+          <div className="icon-group">
+            <Link to="/CheckOut" className="icon-container">
+              <PiShoppingCartSimpleBold size={24} className="icon" />
+              {cartItemCount > 0 && (
+                <span className="counter">{cartItemCount}</span>
+              )}
+            </Link>
 
-    <div className="icon-group">
-      <Link to="/CheckOut" className="icon-container">
-        <PiShoppingCartSimpleBold size={24} className="icon" />
-        {cartItemCount > 0 && (
-          <span className="counter">{cartItemCount}</span>
-        )}
-      </Link>
-
-      <Link to="/wishlist" className="icon-container">
-        <GoHeart size={24} className="icon" />
-        {wishlistItemCount > 0 && (
-          <span className="counter">{wishlistItemCount}</span>
-        )}
-      </Link>
-   
+            <Link to="/wishlist" className="icon-container">
+              <GoHeart size={24} className="icon" />
+              {wishlistItemCount > 0 && (
+                <span className="counter">{wishlistItemCount}</span>
+              )}
+            </Link>
 
             <CgProfile size={24} className='user-icon' onClick={user ? toggleMenu : openLoginModal} />
           </div>
- {/* כפתור להמרת מטבעות */}
- <button
-      onClick={toggleCurrency}
-      className="currency-toggle"
-    >
-      <span className="currency-content">
-        {currency === "ILS" ? (
-          <>
-            <span className="currency-symbol">₪</span>
-            <span className="currency-flag">🇮🇱</span>
-          </>
-        ) : (
-          <>
-            <span className="currency-symbol">$</span>
-            <span className="currency-flag">🇺🇸</span>
-          </>
-        )}
-      </span>
-    </button>
+
+          {/* כפתור להמרת מטבעות */}
+          <button onClick={toggleCurrency} className="currency-toggle">
+            <span className="currency-content">
+              {currency === "ILS" ? (
+                <>
+                  <span className="currency-symbol">₪</span>
+                  <span className="currency-flag">🇮🇱</span>
+                </>
+              ) : (
+                <>
+                  <span className="currency-symbol">$</span>
+                  <span className="currency-flag">🇺🇸</span>
+                </>
+              )}
+            </span>
+          </button>
+
           {isLoginModalOpen && <Login closeLoginModal={closeLoginModal} />}
 
           {isSubMenuOpen && user && (
             <aside className="profile-menu">
               <ul>
-                <li>Update Details</li>
+                <li onClick={toggleEditModal}>Update Details</li>
                 <Link to="/orders">
-                <li>Order History</li>
+                  <li>Order History</li>
                 </Link>
                 <li onClick={logout}>Logout</li>
               </ul>
             </aside>
           )}
         </div>
+      </div>
+
+      {/* הצגת EditUserModal בצורה מותנית במרכז המסך, תוך העברת closeModal */}
+      {isEditModalOpen && (
+        <div className="modal-wrapper">
+          <EditUserModal closeModal={closeEditModal} />
         </div>
+      )}
     </nav>
   );
 };

@@ -1,81 +1,109 @@
 import { useState } from 'react';
-import './editModal.css';
+import axios from 'axios';
 
-function EditModal({ product }) {
+function EditUserModal({ closeModal }) {
+  const { user, updateUser } = useUser();
+  const [formData, setFormData] = useState({
+    name: user?.name || '',
+    lastName: user?.lastName || '',
+    email: user?.email || '',
+    password: '',
+    address: user?.address || ''
+  });
 
-    const [input, setInput] = useState();
-    const [edit, setEdit] = useState({
-        name: false,
-        img: false,
-        price: false,
-        category: false,
-    });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
 
-    function handleEdit(type) {
-        if (edit[type]) {
-            console.log(input);
-            setInput(null);
-        }
-
-        setEdit((prevState) => ({
-            ...prevState,
-            [type]: !prevState[type],
-        }));
+  const handleUpdateSubmit = async (event) => {
+    event.preventDefault();
+    if (!user) {
+      alert("User data is missing. Please log in again.");
+      return;
     }
+    try {
+      const response = await axios.put('http://localhost:3001/user/update-user', {
+        userId: user.id,
+        ...formData
+      });
 
-    return (
-        <div className="edit-modal-container">
-            <div>Edit Product</div>
-            <div className="edit-line-flexer">
-                <div className='edit-inline-flexer'>
-                    name: {edit.name ? (
-                        <input type="text" placeholder={product.name} className='edit-input' onChange={(e) => setInput(e.target.value)}/>
-                    ) : (
-                        product.name
-                    )}
-                </div>
-                <button onClick={() => handleEdit('name')} className='submit-btn'>{
-                    edit.name ? (
-                        <span>submit</span>
-                    ) : (
-                        <span>edit</span>
-                    )
-                }</button>
-            </div>
-            <div className="edit-line-flexer">
-                <div className='edit-inline-flexer'>
-                    price: {edit.price ? (
-                        <input type="text" placeholder={product.price} className='edit-input' onChange={(e) => setInput(e.target.value)}/>
-                    ) : (
-                        product.price
-                    )}
-                </div>
-                <button onClick={() => handleEdit('price')} className='submit-btn'>{
-                    edit.price ? (
-                        <span>submit</span>
-                    ) : (
-                        <span>edit</span>
-                    )
-                }</button>
-            </div>
-            <div className="edit-line-flexer">
-                <div className='edit-inline-flexer'>
-                    category: {edit.category ? (
-                        <input type="text" placeholder={product.category} className='edit-input' onChange={(e) => setInput(e.target.value)}/>
-                    ) : (
-                        product.category
-                    )}
-                </div>
-                <button onClick={() => handleEdit('category')} className='submit-btn'>{
-                    edit.category ? (
-                        <span>submit</span>
-                    ) : (
-                        <span>edit</span>
-                    )
-                }</button>
-            </div>
+      if (response.status === 200) {
+        alert('User details updated successfully');
+        
+        // עדכון הנתונים בקונטקסט וב-localStorage
+        updateUser(response.data.user);
+        
+        // סגירת המודל לאחר העדכון
+        closeModal();
+      }
+    } catch (error) {
+      console.error('Error updating user:', error);
+      alert('Error updating details');
+    }
+  };
+
+  return (
+    <div className="edit-modal-container">
+      <h2>Update User Details</h2>
+      <form onSubmit={handleUpdateSubmit}>
+        <div className="edit-line-flexer">
+          <label>Name:</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            className="edit-input"
+          />
         </div>
-    );
+        <div className="edit-line-flexer">
+          <label>Last Name:</label>
+          <input
+            type="text"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleChange}
+            className="edit-input"
+          />
+        </div>
+        <div className="edit-line-flexer">
+          <label>Email:</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="edit-input"
+          />
+        </div>
+        <div className="edit-line-flexer">
+          <label>Password:</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            className="edit-input"
+          />
+        </div>
+        <div className="edit-line-flexer">
+          <label>Address:</label>
+          <input
+            type="text"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            className="edit-input"
+          />
+        </div>
+        <button type="submit" className="submit-btn">Update</button>
+      </form>
+    </div>
+  );
 }
 
-export default EditModal;
+export default EditUserModal;

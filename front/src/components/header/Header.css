@@ -255,3 +255,65 @@ aside.search-results {
   .currency-flag {
     font-size: 1.2rem;
   }
+  /* עטיפת המודל עבור עריכת פרטי משתמש */
+.modal-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* רקע חצי שקוף */
+  z-index: 1000; /* מעל כל התוכן האחר */
+}
+
+/* עיצוב הקונטיינר של EditUserModal */
+.edit-modal-container {
+  line-height: 1.5;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px; /* רוחב קבוע לטופס */
+  max-width: 90%; /* התאמה למסכים קטנים */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.edit-line-flexer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.edit-input {
+  height: 60%;
+  position: relative;
+  top: 8px;
+  margin-left: 2px;
+}
+
+.edit-inline-flexer {
+  display: flex;
+  align-items: center;
+}
+
+.submit-btn {
+  border-radius: 3px;
+  border: none;
+  height: 36px;
+  top: 8px;
+  position: relative;
+  width: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #4CAF50; /* צבע רקע לכפתור */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #45a049;
+}

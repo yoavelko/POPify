@@ -7,42 +7,43 @@ import axios from 'axios';
 
 function Homepage() {
   const { query } = useUser();
-  const [products, setProducts] = useState([]);  // ערך התחלתי ריק למניעת שגיאה
+  const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [minPrice] = useState("");
-  const [maxPrice] = useState("");
-  const [sortOrder, setSortOrder] = useState("none"); // ערך ברירת מחדל ל"none" כך שהמיון לא יהיה אוטומטי
+  const [sortOrder, setSortOrder] = useState("none");
 
   // שליפת מוצרים מהשרת כולל פופולריות
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(getProductsWithPopularity); // קריאה לנתיב בשרת שמחזיר את המוצרים עם כמות הרכישות
-        setProducts(response.data || []); // בדיקת נתונים וערך ריק אם אין נתונים
+        const response = await axios.get(getProductsWithPopularity);
+        const data = response.data || [];
+
+        // וידוא שכל מוצר כולל את כל השדות הנדרשים
+        const validatedProducts = data.map(product => ({
+          ...product,
+          purchaseCount: product.purchaseCount || 0,
+          name: product.name || "Unknown Product",
+          price: product.price || 0,
+          category: product.category || "Uncategorized"
+        }));
+
+        setProducts(validatedProducts);
       } catch (error) {
         console.error("Error fetching products:", error.message);
-        setProducts([]); // הגדרת products לערך ריק במקרה של שגיאה
+        setProducts([]);
       }
     };
     fetchProducts();
   }, []);
 
-  // סינון ומיון מוצרים לפי קטגוריה, חיפוש, מחיר ופופולריות (כאשר נבחרה האפשרות)
+  // סינון ומיון מוצרים
   const filteredProducts = products
-    .filter(item => 
-      selectedCategory === "All" || item.category === selectedCategory
-    )
-    .filter(item =>
-      item.name && item.name.toLowerCase().includes(query.toLowerCase())
-    )
-    .filter(item =>
-      (minPrice === "" || item.price >= parseFloat(minPrice)) &&
-      (maxPrice === "" || item.price <= parseFloat(maxPrice))
-    )
+    .filter(item => selectedCategory === "All" || item.category === selectedCategory)
+    .filter(item => item.name && item.name.toLowerCase().includes(query.toLowerCase()))
     .sort((a, b) => {
       if (sortOrder === "asc") return a.price - b.price;
       if (sortOrder === "desc") return b.price - a.price;
-      if (sortOrder === "popularity") return (b.purchaseCount || 0) - (a.purchaseCount || 0); // מיון לפי פופולריות רק אם נבחר
+      if (sortOrder === "popularity") return b.purchaseCount - a.purchaseCount;
       return 0;
     });
 
@@ -69,7 +70,7 @@ function Homepage() {
                 ))}
               </select>
             </div>
-  
+
             <div className="filter-group">
               <label htmlFor="sort-select">Sort by</label>
               <select
@@ -87,7 +88,7 @@ function Homepage() {
           </div>
         </div>
       </div>
-  
+
       <div id="homepage-container">
         <div className="products-container">
           {filteredProducts.length > 0 ? (
@@ -100,7 +101,7 @@ function Homepage() {
         </div>
       </div>
     </div>
-  );  
+  );
 }
 
 export default Homepage;

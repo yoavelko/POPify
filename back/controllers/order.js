@@ -69,35 +69,39 @@ exports.updateOrderStatus = async (req, res) => {
 
 exports.getProductsWithPopularity = async (req, res) => {
   try {
-    // חישוב כמות הרכישות לכל מוצר
-    const productPopularity = await Order.aggregate([
-      { $unwind: "$productArr" },
-      { 
-        $group: {
-          _id: "$productArr", 
-          purchaseCount: { $sum: 1 }
-        }
-      }
-    ]);
-
-    // אחזור כל המוצרים
+    // שליפת כל המוצרים
     const products = await Product.find();
 
-    // שילוב כמות הרכישות עם פרטי המוצרים
-    const productsWithPopularity = products.map(product => {
-      const popularity = productPopularity.find(p => p._id.toString() === product._id.toString());
-      return {
-        ...product.toObject(),
-        purchaseCount: popularity ? popularity.purchaseCount : 0
-      };
+    // יצירת מערך מוצרים עם ערכי פופולריות מאופסים
+    const productPopularity = products.map(product => ({
+      _id: product._id.toString(),
+      name: product.name || "Unknown Product",
+      price: product.price || 0,
+      category: product.category || "Uncategorized",
+      img: product.img||[],
+      purchaseCount: 0
+    }));
+
+    // שליפת כל ההזמנות
+    const orders = await Order.find();
+
+    // עדכון הפופולריות לפי הזמנות
+    orders.forEach(order => {
+      order.productArr.forEach(productInOrder => {
+        const product = productPopularity.find(p => p._id === productInOrder.productId.toString());
+        if (product) {
+          product.purchaseCount += productInOrder.quantity;
+        }
+      });
     });
 
-    res.status(200).json(productsWithPopularity);
+    res.status(200).json(productPopularity);
   } catch (error) {
     console.error("Error retrieving products with popularity:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 exports.getOrder= async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).exec();
@@ -129,3 +133,48 @@ exports.getUserOrders = async (req, res) => {
   }
 };
 
+exports.getOrdersPerCustomer = async (req, res) => {
+  try {
+    const customerOrders = await Order.aggregate([
+      {
+        $group: {
+          _id: "$userId", // קיבוץ לפי מזהה המשתמש
+          totalOrders: { $sum: 1 } // ספירת כמות ההזמנות
+        }
+      },
+      {
+        $lookup: {
+          from: "users", // שם אוסף המשתמשים
+          localField: "_id", // מזהה המשתמש באוסף ההזמנות
+          foreignField: "_id", // מזהה המשתמש באוסף המשתמשים
+          as: "userDetails" // שם השדה שבו יישמרו פרטי המשתמשים
+        }
+      },
+      {
+        $unwind: {
+          path: "$userDetails",
+          preserveNullAndEmptyArrays: true // כולל משתמשים ללא פרטים
+        }
+      },
+      {
+        $project: {
+          _id: 1, // מזהה המשתמש
+          totalOrders: 1, // כמות ההזמנות
+          fullName: {
+            $concat: [
+              { $ifNull: ["$userDetails.name", "Unknown"] }, // שם פרטי או "Unknown"
+              " ",
+              { $ifNull: ["$userDetails.lastName", ""] } // שם משפחה או ריק
+            ]
+          }
+        }
+      },
+      { $sort: { totalOrders: -1 } } // מיון לפי כמות ההזמנות
+    ]);
+
+    res.status(200).json(customerOrders);
+  } catch (error) {
+    console.error("Error fetching orders per customer:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};

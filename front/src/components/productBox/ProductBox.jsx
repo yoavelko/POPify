@@ -69,18 +69,23 @@ function ProductBox({ index, value }) {
         });
     }
 
-    const imgIds = value.img.map(link => extractDriveFileId(link));
-    const imageUrl = hover
-        ? `https://drive.google.com/thumbnail?id=${imgIds[1]}`
-        : `https://drive.google.com/thumbnail?id=${imgIds[0]}`;
+    const imgIds = Array.isArray(value.img) 
+        ? value.img.map(link => extractDriveFileId(link)) 
+        : [];
+    const imageUrl = imgIds.length > 1
+        ? (hover 
+            ? `https://drive.google.com/thumbnail?id=${imgIds[1]}` 
+            : `https://drive.google.com/thumbnail?id=${imgIds[0]}`
+          )
+        : `https://via.placeholder.com/150`; // ברירת מחדל במקרה של תמונה חסרה
     
-    const convertedPrice = convertPrice(value.price);
+    const convertedPrice = convertPrice(value.price || 0);
 
     return (
         <div id='product-box-container' onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-            <img className='box-img' src={imageUrl} alt="None" />
-            <div>{value.name}</div>
-            <div>{value.category}</div>
+            <img className='box-img' src={imageUrl} alt="Product Image" />
+            <div>{value.name || "Unnamed Product"}</div>
+            <div>{value.category || "Uncategorized"}</div>
             <div>{convertedPrice} {currency === "ILS" ? "₪" : "$"}</div>
             <div className='product-buttons-container'>
                 <button className="button" onClick={() => addToCartFunc(value)}>Cart</button>

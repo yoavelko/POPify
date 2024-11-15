@@ -1,15 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import "./admin.css";
+import Statistics from '../Admin/statistics/ProductS';
+import StatisticsU from '../Admin/statistics/UsersOrders';
 
 const AdminDashboard = () => {
   return (
     <div className="bodyAdminDashboard">
-      <h1>Admin Dashboard</h1>
-
+      <div className="admin-header">
+        <h1>Admin Dashboard</h1>
+      </div>
+      <div className="statistics-container">
+        <Statistics />
+        <StatisticsU />
+      </div>
       <div className="admin-container">
         <Link to="/usersAdmin" className="adminBoxDash">
-         <div className="admin-box">
+          <div className="admin-box">
             <h2>User Management</h2>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +33,6 @@ const AdminDashboard = () => {
             </svg>
           </div>
         </Link>
-
         <Link to="/productA" className="adminBoxDash">
           <div className="admin-box">
             <h2>Store Management</h2>
@@ -46,7 +52,6 @@ const AdminDashboard = () => {
             </svg>
           </div>
         </Link>
-
         <a href="/branchAdmin" className="adminBoxDash">
           <div className="admin-box">
             <h2>Orders Management</h2>

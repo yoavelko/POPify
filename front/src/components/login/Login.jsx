@@ -28,11 +28,26 @@ function Login({ closeLoginModal }) {
                 
                 // Extract user data from the response
                 const { user } = response.data;
-                const { isAdmin, lastName } = user;
+                const { isAdmin } = user;
     
                 // Set user information in the state and localStorage
                 setUser(user);
                 localStorage.setItem('user', JSON.stringify(user));
+    
+                // Fetch cart for the logged-in user
+                const cartResponse = await axios.get(`http://localhost:3001/user/${user.id}/cart`);
+                const { cart } = cartResponse.data;
+    
+                // Fetch wishlist for the logged-in user
+                const wishlistResponse = await axios.get(`http://localhost:3001/user/${user.id}/wishlist`);
+                const { wishList } = wishlistResponse.data;
+    
+                // Save cart and wishlist to localStorage
+                localStorage.setItem('cart', JSON.stringify(cart || []));
+                localStorage.setItem('wishlist', JSON.stringify(wishList || []));
+    
+                console.log('Cart:', cart);
+                console.log('Wishlist:', wishList);
     
                 // Check if the user is an admin
                 if (isAdmin) {
@@ -40,15 +55,16 @@ function Login({ closeLoginModal }) {
                 } else {
                     alert('You are logged in as a regular user.');
                 }
-                
+    
                 closeLoginModal();
-                window.location.reload();
+                window.location.reload(); // Refresh the page to reflect updated data
             }
         } catch (error) {
             console.error('Error logging in:', error);
             setLoginError('Login failed.');
         }
     };
+    
     
     
     const handleSignupSubmit = async (event) => {

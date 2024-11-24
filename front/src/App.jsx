@@ -18,6 +18,7 @@ import UserAdmin from './components/Admin/userAdmin/usersAdmin';
 import Wish from './components/WishList/WishList';
 import Contact from './components/Contact/Contact';
 import { CurrencyProvider } from './context/CurrencyContext';
+import Orders from './components/Admin/orders/Orders';
 
 function App() {
   return (
@@ -38,7 +39,7 @@ function App() {
           <Route path="/orders" element={<OrderHistory />} />
           {/* Protected Pages */}
           <Route
-            path='/Admin'
+            path='/admin'
             element={
               <ProtectedRoute>
                 <Admin />
@@ -46,7 +47,7 @@ function App() {
             }
           />
           <Route
-            path='/productA'
+            path='/admin/products'
             element={
               <ProtectedRoute>
                 <ProductManagement />
@@ -54,10 +55,18 @@ function App() {
             }
           />
           <Route
-            path='/usersAdmin'
+            path='/admin/users'
             element={
               <ProtectedRoute>
                 <UserAdmin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/admin/orders'
+            element={
+              <ProtectedRoute>
+                <Orders />
               </ProtectedRoute>
             }
           />

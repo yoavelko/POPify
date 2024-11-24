@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { useUser } from '../../../../context/UserContext';
 import axios from 'axios';
 
-function EditUserModal({ closeModal }) {
+function EditProductModal({ closeModal }) {
   const { user, updateUser } = useUser();
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -33,10 +34,10 @@ function EditUserModal({ closeModal }) {
 
       if (response.status === 200) {
         alert('User details updated successfully');
-        
+
         // עדכון הנתונים בקונטקסט וב-localStorage
         updateUser(response.data.user);
-        
+
         // סגירת המודל לאחר העדכון
         closeModal();
       }
@@ -106,4 +107,4 @@ function EditUserModal({ closeModal }) {
   );
 }
 
-export default EditUserModal;
+export default EditProductModal;

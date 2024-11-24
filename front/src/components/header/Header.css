@@ -17,20 +17,39 @@ nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
 }
 
 /* עיצוב צד שמאל */
 .left {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    width: 60%;
+}
+
+#left-ul {
+  margin-bottom: 0;
+  padding: 0;
+  width: calc(100% - 25vw);
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.logo {
+  width: 25vw;
+  display: flex;
+  justify-content: center;
+}
+
+.logo:hover {
+  transform: scale(1.1);
+  transition: .1s ease-in-out;
 }
 
 .logo img {
     width: 150px;
     height: 50px;
     object-fit: cover;
-    margin-right: 30px;
 }
 
 .left ul {
@@ -40,7 +59,6 @@ nav {
 
 .left ul li {
     list-style: none;
-    margin-left: 15px;
 }
 
 .left ul li a {
@@ -48,8 +66,8 @@ nav {
     color: #fff;
     font-size: 1.2rem;
     font-weight: 500;
-    padding: 8px 15px;
     border-radius: 5px;
+    padding: 12px;
     transition: background 0.3s ease;
 }
 
@@ -62,6 +80,8 @@ nav {
 .right {
     display: flex;
     align-items: center;
+    justify-content: space-evenly;
+    width: 40%;
 }
 
 #search-query {
@@ -69,7 +89,8 @@ nav {
     border-radius: 5px;
     border: 1px solid #ddd;
     font-size: 1rem;
-    margin-right: 20px;
+    margin-bottom: 0;
+    width: 50%;
 }
 
 .icon-group {
@@ -228,7 +249,6 @@ aside.search-results {
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 5px;
     padding: 6px 12px;
-    margin-right: 20px;
     color: white;
     display: flex;
     align-items: center;

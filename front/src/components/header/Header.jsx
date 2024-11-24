@@ -68,12 +68,11 @@ const Navbar = () => {
               <img src={logo} alt="Funko Logo" />
             </div>
           </Link>
-          <ul>
+          <ul id='left-ul'>
             <li><Link to="/homepage">Products</Link></li>
             {user && isAdmin && (
               <li><Link to="/Admin">Admin</Link></li>
             )}
-            <Link to='/contact'><li>Contact Us</li></Link>
           </ul>
         </div>
 

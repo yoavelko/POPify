@@ -15,7 +15,7 @@ const AdminDashboard = () => {
         <StatisticsU />
       </div>
       <div className="admin-container">
-        <Link to="/usersAdmin" className="adminBoxDash">
+        <Link to="/admin/users" className="adminBoxDash">
           <div className="admin-box">
             <h2>User Management</h2>
             <svg
@@ -33,7 +33,7 @@ const AdminDashboard = () => {
             </svg>
           </div>
         </Link>
-        <Link to="/productA" className="adminBoxDash">
+        <Link to="/admin/products" className="adminBoxDash">
           <div className="admin-box">
             <h2>Store Management</h2>
             <svg
@@ -52,7 +52,7 @@ const AdminDashboard = () => {
             </svg>
           </div>
         </Link>
-        <a href="/branchAdmin" className="adminBoxDash">
+        <Link to={'/admin/orders'} className="adminBoxDash">
           <div className="admin-box">
             <h2>Orders Management</h2>
             <svg
@@ -70,7 +70,7 @@ const AdminDashboard = () => {
               />
             </svg>
           </div>
-        </a>
+        </Link>
       </div>
     </div>
   );

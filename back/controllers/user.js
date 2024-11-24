@@ -284,3 +284,42 @@ exports.getProducts = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
+
+exports.getProducts = async (req, res) => {
+    try {
+        // Fetch all products from the database
+        const products = await Product.find();
+
+        // Respond with the array of user objects
+        res.status(200).json({
+            message: "Products retrieved successfully",
+            products
+        });
+    } catch (error) {
+        console.error("Error retrieving products:", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+exports.getProductsByCategory = async (req, res) => {
+    try {
+        // Fetch all products from the database grouped by category
+        const products = await Product.aggregate([
+            {
+                $group: {
+                    _id: "$category", // קיבוץ לפי השדה category
+                    products: { $push: "$$ROOT" } // דחיפה של כל המסמך לתוך מערך products
+                }
+            }
+        ]);
+
+        // Respond with the array of products grouped by category
+        res.status(200).json({
+            message: "Products grouped by category retrieved successfully",
+            products
+        });
+    } catch (error) {
+        console.error("Error retrieving products by category:", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+

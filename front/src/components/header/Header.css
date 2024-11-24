@@ -17,20 +17,39 @@ nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
 }
 
 /* עיצוב צד שמאל */
 .left {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    width: 60%;
+}
+
+#left-ul {
+  margin-bottom: 0;
+  padding: 0;
+  width: calc(100% - 25vw);
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.logo {
+  width: 25vw;
+  display: flex;
+  justify-content: center;
+}
+
+.logo:hover {
+  transform: scale(1.1);
+  transition: .1s ease-in-out;
 }
 
 .logo img {
     width: 150px;
     height: 50px;
     object-fit: cover;
-    margin-right: 30px;
 }
 
 .left ul {
@@ -40,7 +59,6 @@ nav {
 
 .left ul li {
     list-style: none;
-    margin-left: 15px;
 }
 
 .left ul li a {
@@ -48,8 +66,8 @@ nav {
     color: #fff;
     font-size: 1.2rem;
     font-weight: 500;
-    padding: 8px 15px;
     border-radius: 5px;
+    padding: 12px;
     transition: background 0.3s ease;
 }
 
@@ -62,6 +80,8 @@ nav {
 .right {
     display: flex;
     align-items: center;
+    justify-content: space-evenly;
+    width: 40%;
 }
 
 #search-query {
@@ -69,7 +89,8 @@ nav {
     border-radius: 5px;
     border: 1px solid #ddd;
     font-size: 1rem;
-    margin-right: 20px;
+    margin-bottom: 0;
+    width: 50%;
 }
 
 .icon-group {
@@ -228,7 +249,6 @@ aside.search-results {
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 5px;
     padding: 6px 12px;
-    margin-right: 20px;
     color: white;
     display: flex;
     align-items: center;
@@ -255,3 +275,65 @@ aside.search-results {
   .currency-flag {
     font-size: 1.2rem;
   }
+  /* עטיפת המודל עבור עריכת פרטי משתמש */
+.modal-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* רקע חצי שקוף */
+  z-index: 1000; /* מעל כל התוכן האחר */
+}
+
+/* עיצוב הקונטיינר של EditUserModal */
+.edit-modal-container {
+  line-height: 1.5;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px; /* רוחב קבוע לטופס */
+  max-width: 90%; /* התאמה למסכים קטנים */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.edit-line-flexer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.edit-input {
+  height: 60%;
+  position: relative;
+  top: 8px;
+  margin-left: 2px;
+}
+
+.edit-inline-flexer {
+  display: flex;
+  align-items: center;
+}
+
+.submit-btn {
+  border-radius: 3px;
+  border: none;
+  height: 36px;
+  top: 8px;
+  position: relative;
+  width: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #4CAF50; /* צבע רקע לכפתור */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #45a049;
+}

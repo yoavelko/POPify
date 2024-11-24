@@ -1,0 +1,12 @@
+.admin-orders-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.admin-orders-header {
+    font-size: xx-large;
+    font-weight: bold;
+    margin-top: 60px;
+    margin-bottom: 20px;
+}

@@ -71,7 +71,7 @@ const Navbar = () => {
           <ul id='left-ul'>
             <li><Link to="/homepage">Products</Link></li>
             {user && isAdmin && (
-              <li><Link to="/Admin">Admin</Link></li>
+              <li><Link to="/admin">Admin</Link></li>
             )}
           </ul>
         </div>

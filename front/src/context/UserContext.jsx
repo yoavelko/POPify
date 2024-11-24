@@ -13,6 +13,7 @@ export const UserProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
 
+
   // --- Utility Functions ---
   const fetchProducts = async () => {
     try {
@@ -27,40 +28,6 @@ export const UserProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error fetching products:", error.message);
-    }
-  };
-
-  const saveCartAndWishlist = async () => {
-    if (!user?.id) return;
-
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const wishlistToSave = JSON.parse(localStorage.getItem("wishlist")) || [];
-
-    console.log("Saving cart:", cart);
-    console.log("Saving wishlist:", wishlistToSave);
-
-    try {
-      // שמירת העגלה
-      for (const productId of cart) {
-        const response = await axios.patch("http://localhost:3001/user/add-to-cart", {
-          userId: user.id,
-          productId,
-        });
-        console.log("Cart save response:", response.data);
-      }
-
-      // שמירת רשימת המשאלות
-      for (const productId of wishlistToSave) {
-        const response = await axios.patch("http://localhost:3001/user/add-to-wish-list", {
-          userId: user.id,
-          productId,
-        });
-        console.log("Wishlist save response:", response.data);
-      }
-
-      console.log("Cart and Wishlist saved successfully.");
-    } catch (error) {
-      console.error("Error saving cart or wishlist:", error.message);
     }
   };
 
@@ -84,14 +51,6 @@ export const UserProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    if (!user?.id) {
-      console.error("User is not logged in.");
-      return;
-    }
-
-    await saveCartAndWishlist();
-
-    // איפוס נתוני המשתמש
     setUser(null);
     setIsAdmin(false);
     setWishlist([]);
@@ -100,32 +59,8 @@ export const UserProvider = ({ children }) => {
     localStorage.removeItem("wishlist");
     window.location.reload();
   };
-
-  const addToCart = async (productId) => {
-    if (!user?.id) {
-      console.error("User is not logged in.");
-      return;
-    }
-
-    try {
-      // קריאה לשרת להוספת המוצר לעגלה
-      const response = await axios.patch("http://localhost:3001/user/add-to-cart", {
-        userId: user.id,
-        productId,
-      });
-
-      // עדכון עגלת הקניות המקומית (localStorage)
-      const updatedCart = JSON.parse(localStorage.getItem("cart")) || [];
-      if (!updatedCart.includes(productId)) {
-        updatedCart.push(productId);
-        localStorage.setItem("cart", JSON.stringify(updatedCart));
-      }
-
-      console.log("Product added to cart:", response.data);
-    } catch (error) {
-      console.error("Error adding product to cart:", error.message);
-    }
-  };
+  
+    
 
   const addToWishList = async (productId) => {
     if (!user?.id) {
@@ -170,7 +105,6 @@ export const UserProvider = ({ children }) => {
         products,
         isAdmin,
         wishlist,
-        addToCart,
         addToWishList,
       }}
     >

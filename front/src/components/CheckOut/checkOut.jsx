@@ -22,10 +22,6 @@ const CheckOut = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // שדות לכתובת
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
-
   useEffect(() => {
     const loadCart = () => {
       try {
@@ -68,21 +64,32 @@ const CheckOut = () => {
     );
   };
 
-  const removeItem = (targetId) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== targetId));
-    window.location.reload();
+  const removeItem = async (targetId) => {
+    try {
+      // קריאה לשרת למחיקת המוצר
+      const response = await axios.patch("http://localhost:3001/user/remove-from-cart", {
+        userId: user.id,
+        targetId,
+      });
+  
+      if (response.status === 200) {
+        console.log("Product removed successfully:", response.data);
+  
+        // עדכון ה-state המקומי (הסרת המוצר מהעגלה)
+        setCartItems((prevItems) =>
+          prevItems.filter((item) => item.id !== targetId)
+        );
+      } else {
+        console.error("Failed to remove product from the database");
+      }
+    } catch (error) {
+      console.error("Error removing product from the database:", error.message);
+    }
   };
+  
 
   const handleCheckout = async (event) => {
     event.preventDefault();
-    if (!user) {
-      alert('You must log in to create the order');
-      return;
-    }
-    if (!address || !city) {
-      alert('Please enter your address and city');
-      return;
-    }
     if (cartItems.length === 0) {
       alert('אנא הוסף מוצרים לעגלה לפני המעבר לקופה');
       return;
@@ -102,7 +109,7 @@ const CheckOut = () => {
       userId: userId,
       status: "Pending",
       totalSum: subtotal,
-      address: `${address}, ${city}` // שילוב הכתובת והעיר
+      address: "City, Street"
     };
     
     try {
@@ -110,7 +117,6 @@ const CheckOut = () => {
       console.log('Order created:', response.data);
       alert('ההזמנה בוצעה בהצלחה');
       setCartItems([]);
-      window.location.reload();
       localStorage.removeItem('cart');
     } catch (error) {
       console.error('Error creating order:', error);
@@ -205,30 +211,6 @@ const CheckOut = () => {
               })}
             </tbody>
           </table>
-
-          <div className="checkout-form">
-            <h3>פרטי משלוח</h3>
-            <div className="form-group">
-              <label htmlFor="address">כתובת:</label>
-              <input
-                type="text"
-                id="address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="הזן כתובת"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="city">עיר:</label>
-              <input
-                type="text"
-                id="city"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="הזן עיר"
-              />
-            </div>
-          </div>
 
           <div className="checkout-summary">
             <div className="summary-details">

@@ -23,11 +23,20 @@ function EditModal({ product, setIsModalOpen }) {
             setInput(null);
         }
 
-        setEdit((prevState) => ({
-            ...prevState,
-            [type]: !prevState[type],
-        }));
+      if (response.status === 200) {
+        alert('User details updated successfully');
+        
+        // עדכון הנתונים בקונטקסט וב-localStorage
+        updateUser(response.data.user);
+        
+        // סגירת המודל לאחר העדכון
+        closeModal();
+      }
+    } catch (error) {
+      console.error('Error updating user:', error);
+      alert('Error updating details');
     }
+  };
 
     function handleSubmit() {
 
@@ -126,7 +135,10 @@ function EditModal({ product, setIsModalOpen }) {
                 <button onClick={handleSubmit} className='edit-submit-btn'>Submit Changes</button>
             </div>
         </div>
-    );
+        <button type="submit" className="submit-btn">Update</button>
+      </form>
+    </div>
+  );
 }
 
-export default EditModal;
+export default EditUserModal;

@@ -8,6 +8,7 @@ import { IoAddCircleOutline } from "react-icons/io5";
 import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
 import EditModal from './editModal/editModal';
 import NewModal from './NewModal/NewModal';
+import axios from 'axios';
 
 const ProductManagement = () => {
   const { products, isAdmin } = useUser(); // שימוש במוצרים ובמצב מנהל מההקשר
@@ -21,13 +22,13 @@ const ProductManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   isModalOpen ? disableBodyScroll(document) : enableBodyScroll(document)
-  
+
   const handleEdit = (product) => {
-    setFormData({ 
-      name: product.name, 
-      img: Array.isArray(product.img) ? product.img : [product.img], 
-      price: product.price, 
-      category: product.category 
+    setFormData({
+      name: product.name,
+      img: Array.isArray(product.img) ? product.img : [product.img],
+      price: product.price,
+      category: product.category
     });
     setEditMode({
       mode: true,
@@ -51,7 +52,7 @@ const ProductManagement = () => {
       alert(response.data.message);
 
       if (response.data.success) {
-        setProducts((prev) => prev.map((prod) => 
+        setProducts((prev) => prev.map((prod) =>
           prod._id === currentProductId ? response.data.product : prod
         ));
       } else {
@@ -67,23 +68,27 @@ const ProductManagement = () => {
   };
 
   const handleDelete = async (productId) => {
-    const url = `http://localhost:3001/admin/products/${productId}`;
-    const token = localStorage.getItem("token");
+    const isConfirmed = window.confirm("Are you sure you want to delete this product?");
 
-    try {
-      const response = await axios.delete(url, {
-        headers: {
-          'x-auth-token': token,
-        },
-      });
-      alert(response.data.message);
+    if (isConfirmed) {
+      const url = `http://localhost:3001/admin/products/${productId}`;
+      const token = localStorage.getItem("token");
 
-      if (response.status === 200) {
-        setProducts((prev) => prev.filter((prod) => prod._id !== productId));
+      try {
+        const response = await axios.delete(url, {
+          headers: {
+            'x-auth-token': token,
+          },
+        });
+        alert(response.data.message);
+
+        if (response.status === 200) {
+          setProducts((prev) => prev.filter((prod) => prod._id !== productId));
+        }
+      } catch (error) {
+        console.error('Error deleting product:', error);
+        setErrorMessage('Failed to delete product.');
       }
-    } catch (error) {
-      console.error('Error deleting product:', error);
-      setErrorMessage('Failed to delete product.');
     }
   };
 
@@ -141,7 +146,12 @@ const ProductManagement = () => {
         <div className="modal">
           <div className="modal-content">
             <span className="close" onClick={() => setIsModalOpen(false)}>&times;</span>
-            <div>{editMode.mode ? <EditModal product={editMode.product}/> : <NewModal/>}</div>
+            <div>{
+            editMode.mode ? 
+            <EditModal product={editMode.product} setIsModalOpen={setIsModalOpen} /> 
+            : 
+            <NewModal  setIsModalOpen={setIsModalOpen} />
+            }</div>
             <form onSubmit={handleSubmit}>
               {/* Form inputs remain unchanged */}
             </form>

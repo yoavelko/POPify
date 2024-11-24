@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import './editModal.css';
+import { updateProduct } from '../../../../utils/AdminRoutes';
+import axios from 'axios'
 
-function EditModal({ product }) {
+function EditModal({ product, setIsModalOpen }) {
 
-    const [input, setInput] = useState();
+    const [input, setInput] = useState(null);
+    const [editProd, setEditProd] = useState(product);
     const [edit, setEdit] = useState({
         name: false,
         img: false,
@@ -12,8 +15,11 @@ function EditModal({ product }) {
     });
 
     function handleEdit(type) {
-        if (edit[type]) {
-            console.log(input);
+        if (edit[type] && input != null) {
+            setEditProd((prevState) => ({
+                ...prevState,
+                [type]: input,
+            }))
             setInput(null);
         }
 
@@ -23,13 +29,38 @@ function EditModal({ product }) {
         }));
     }
 
+    function handleSubmit() {
+
+        if (
+            edit.name || edit.img || edit.price || edit.category
+        ) {
+            alert('Please submit all fields first')
+        } else {
+
+            axios.patch(`${updateProduct}/${editProd._id}`, {
+                name: editProd.name,
+                price: editProd.price,
+                img: editProd.img,
+                category: editProd.category
+            })
+                .then((res) => {
+                    console.log(res.data);
+                    alert("Product updated");
+                    setIsModalOpen(false);
+                })
+                .catch((err) => {
+                    console.error("Error updating:", err.response?.data || err.message);
+                });
+        }
+    }
+
     return (
         <div className="edit-modal-container">
-            <div>Edit Product</div>
+            <div className='edit-modal-header'>Edit Product</div>
             <div className="edit-line-flexer">
                 <div className='edit-inline-flexer'>
                     name: {edit.name ? (
-                        <input type="text" placeholder={product.name} className='edit-input' onChange={(e) => setInput(e.target.value)}/>
+                        <input type="text" placeholder={product.name} id='edit-input' onChange={(e) => setInput(e.target.value)} />
                     ) : (
                         product.name
                     )}
@@ -44,14 +75,14 @@ function EditModal({ product }) {
             </div>
             <div className="edit-line-flexer">
                 <div className='edit-inline-flexer'>
-                    price: {edit.price ? (
-                        <input type="text" placeholder={product.price} className='edit-input' onChange={(e) => setInput(e.target.value)}/>
+                    image link:&nbsp; {edit.img ? (
+                        <input type="text" placeholder={product.img} id='edit-input' onChange={(e) => setInput(e.target.value)} />
                     ) : (
-                        product.price
+                        <span className='edit-overflow'>{product.img}</span>
                     )}
                 </div>
-                <button onClick={() => handleEdit('price')} className='submit-btn'>{
-                    edit.price ? (
+                <button onClick={() => handleEdit('img')} className='submit-btn'>{
+                    edit.img ? (
                         <span>submit</span>
                     ) : (
                         <span>edit</span>
@@ -61,7 +92,7 @@ function EditModal({ product }) {
             <div className="edit-line-flexer">
                 <div className='edit-inline-flexer'>
                     category: {edit.category ? (
-                        <input type="text" placeholder={product.category} className='edit-input' onChange={(e) => setInput(e.target.value)}/>
+                        <input type="text" placeholder={product.category} id='edit-input' onChange={(e) => setInput(e.target.value)} />
                     ) : (
                         product.category
                     )}
@@ -73,6 +104,26 @@ function EditModal({ product }) {
                         <span>edit</span>
                     )
                 }</button>
+            </div>
+            <div className="edit-line-flexer">
+                <div className='edit-inline-flexer'>
+                    price: {edit.price ? (
+                        <input type="text" placeholder={product.price} id='edit-input' onChange={(e) => setInput(e.target.value)} />
+                    ) : (
+                        product.price
+                    )
+                    }
+                </div>
+                <button onClick={() => handleEdit('price')} className='submit-btn'>{
+                    edit.price ? (
+                        <span>submit</span>
+                    ) : (
+                        <span>edit</span>
+                    )
+                }</button>
+            </div>
+            <div className='edit-modal-btn-container'>
+                <button onClick={handleSubmit} className='edit-submit-btn'>Submit Changes</button>
             </div>
         </div>
     );

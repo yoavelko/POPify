@@ -19,5 +19,4 @@ const orderSchema = new mongoose.Schema({
   address: { type: String, required: true }
 });
 
-const Order = mongoose.model('Order', orderSchema);
-module.exports = Order;
+module.exports = mongoose.model('Order', orderSchema);

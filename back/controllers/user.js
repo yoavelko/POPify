@@ -264,7 +264,6 @@ exports.searchProducts = async (req, res) => {
     }
 };
 
-
 exports.getProducts = async (req, res) => {
     try {
         // Fetch all products from the database

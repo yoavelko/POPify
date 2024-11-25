@@ -178,3 +178,18 @@ exports.getOrdersPerCustomer = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+
+exports.getAllOrders = async (req, res) => {
+  try {
+      const orders = await Order.find();
+
+      res.status(200).json({
+          message: "Orders retrieved successfully",
+          orders
+      });
+  } catch (error) {
+      console.error("Error retrieving orders:", error.message);
+      res.status(500).json({ message: "Server error", error: error.message });
+  }
+};

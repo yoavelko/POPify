@@ -3,7 +3,8 @@ import { FaMinus, FaPlus } from "react-icons/fa";
 import { MdOutlineCancel } from "react-icons/md";
 import axios from 'axios';
 import './CheckOut.css';
-import { useUser } from '../../context/UserContext'; 
+import { useCart } from '../cartIcon';
+import { useUser } from '../../context/UserContext';
 import { useCurrency } from '../../context/CurrencyContext'; // ייבוא קונטקסט המטבע
 
 function extractDriveFileId(link) {
@@ -14,8 +15,9 @@ function extractDriveFileId(link) {
 
 const CheckOut = () => {
   const { user } = useUser();
+  const { setCartItemCount } = useCart(); // קריאה ל-useCart כאן, בקומפוננטה
   const userId = user ? user.id : null;
-  
+
   const { currency, exchangeRate } = useCurrency(); // שימוש בקונטקסט של המטבע
   const [cartItems, setCartItems] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
@@ -54,39 +56,85 @@ const CheckOut = () => {
     calculateSubtotal();
   }, [cartItems]);
 
-  const updateQuantity = (targetId, delta) => {
-    setCartItems((prevCartItems) =>
-      prevCartItems.map((item) =>
-        item.id === targetId
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item
-      )
-    );
-  };
-
-  const removeItem = async (targetId) => {
+  const updateQuantity = async (productId, delta) => {
     try {
-      // קריאה לשרת למחיקת המוצר
-      const response = await axios.patch("http://localhost:3001/user/remove-from-cart", {
-        userId: user.id,
-        targetId,
-      });
-  
-      if (response.status === 200) {
-        console.log("Product removed successfully:", response.data);
-  
-        // עדכון ה-state המקומי (הסרת המוצר מהעגלה)
-        setCartItems((prevItems) =>
-          prevItems.filter((item) => item.id !== targetId)
-        );
-      } else {
-        console.error("Failed to remove product from the database");
+      if (delta > 0) {
+        // פלוס: הוספת פריט נוסף
+        const response = await axios.patch('http://localhost:3001/user/add-to-cart', {
+          userId: user.id,
+          productId: productId,
+        });
+
+        if (response.status === 200) {
+          console.log("Product added successfully:", response.data);
+
+          // עדכון עגלה ב-Frontend
+          setCartItems((prevItems) => {
+            const updatedCart = prevItems.map((item) =>
+              item._id === productId ? { ...item, quantity: item.quantity + 1 } : item
+            );
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
+            return updatedCart;
+          });
+        }
+      } else if (delta < 0) {
+        // מינוס: הסרת פריט
+        const response = await axios.patch('http://localhost:3001/user/remove-from-cart', {
+          userId: user.id,
+          productId: productId,
+        });
+
+        if (response.status === 200) {
+          console.log("Product removed successfully:", response.data);
+
+          // עדכון עגלה ב-Frontend
+          setCartItems((prevItems) => {
+            const updatedCart = prevItems.map((item) =>
+              item._id === productId && item.quantity > 1
+                ? { ...item, quantity: item.quantity - 1 }
+                : item
+            ).filter((item) => item.quantity > 0);
+
+            localStorage.setItem('cart', JSON.stringify(updatedCart));
+            return updatedCart;
+          });
+        }
       }
     } catch (error) {
-      console.error("Error removing product from the database:", error.message);
+      console.error("Error updating product quantity:", error.message);
     }
   };
-  
+
+
+  function removeItem(targetId) {
+    if (!userId) {
+      alert("You must be logged in to remove items from the cart.");
+      return;
+    }
+
+    // עדכון ה-סטייט המקומי וה-localStorage
+    setCartItems((prevItems) => {
+      const updatedCart = prevItems.filter((item) => item._id !== targetId);
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      setCartItemCount(updatedCart.length); // עדכון המספר
+      return updatedCart; // עדכון מיידי של הסטייט
+    });
+
+    // קריאה לשרת למחיקת המוצר
+    axios.patch('http://localhost:3001/user/remove-from-cart', {
+      userId: userId, // שימוש ב-userId מהקונטקסט
+      productId: targetId,
+    })
+      .then((res) => {
+        console.log(res);
+        alert("Product removed from cart");
+      })
+      .catch((err) => {
+        console.error("Error removing product from cart:", err);
+      });
+  }
+
+
 
   const handleCheckout = async (event) => {
     event.preventDefault();
@@ -111,7 +159,7 @@ const CheckOut = () => {
       totalSum: subtotal,
       address: "City, Street"
     };
-    
+
     try {
       const response = await axios.post('http://localhost:3001/order', orderData);
       console.log('Order created:', response.data);
@@ -154,16 +202,16 @@ const CheckOut = () => {
             </thead>
             <tbody>
               {cartItems.map((item) => {
-                const itemPrice = currency === 'USD' 
-                  ? (item.price * exchangeRate).toFixed(2) 
+                const itemPrice = currency === 'USD'
+                  ? (item.price * exchangeRate).toFixed(2)
                   : item.price.toFixed(2);
 
-                const itemTotal = currency === 'USD' 
-                  ? (item.price * item.quantity * exchangeRate).toFixed(2) 
+                const itemTotal = currency === 'USD'
+                  ? (item.price * item.quantity * exchangeRate).toFixed(2)
                   : (item.price * item.quantity).toFixed(2);
 
                 return (
-                  <tr key={item.id}>
+                  <tr key={item._id}>
                     <td className="product-info">
                       <img
                         src={`https://drive.google.com/thumbnail?id=${extractDriveFileId(item.img?.[0]) || ''}`}
@@ -181,26 +229,28 @@ const CheckOut = () => {
                     <td>{currency === 'ILS' ? '₪' : '$'}{itemPrice}</td>
                     <td className="quantity-control">
                       <button
-                        onClick={() => updateQuantity(item.id, -1)}
+                        onClick={() => updateQuantity(item._id, -1)}
                         className="quantity-button"
                         aria-label="הפחת כמות"
                       >
                         <FaMinus size={12} />
                       </button>
+
                       <span className="quantity-display">{item.quantity}</span>
                       <button
-                        onClick={() => updateQuantity(item.id, 1)}
+                        onClick={() => updateQuantity(item._id, 1)}
                         className="quantity-button"
                         aria-label="הוסף כמות"
                       >
                         <FaPlus size={12} />
                       </button>
+
                     </td>
                     <td>{currency === 'ILS' ? '₪' : '$'}{itemTotal}</td>
                     <td>
                       <button
                         className="remove-item"
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => removeItem(item._id)}
                         aria-label="הסר פריט"
                       >
                         <MdOutlineCancel size={18} />

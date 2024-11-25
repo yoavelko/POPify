@@ -268,23 +268,6 @@ exports.searchProducts = async (req, res) => {
     }
 };
 
-
-exports.getProducts = async (req, res) => {
-    try {
-        // Fetch all products from the database
-        const products = await Product.find();
-
-        // Respond with the array of user objects
-        res.status(200).json({
-            message: "Products retrieved successfully",
-            products
-        });
-    } catch (error) {
-        console.error("Error retrieving products:", error.message);
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
-};
-
 exports.getProducts = async (req, res) => {
     try {
         // Fetch all products from the database

@@ -23,7 +23,6 @@ router.post('/search-product', searchProducts);
 router.patch('/add-to-wish-list', addToWishList);
 router.patch('/remove-from-wish-list', removeFromWishList);
 router.get('/get-products', getProducts);
-router.get('')
 router.get('/getProductsByCategory', getProductsByCategory);
 
 

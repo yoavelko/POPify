@@ -13,8 +13,8 @@ const {
     getProducts, 
     getCart,
     getProductsByCategory,
-    getWishlist
-    
+    getWishlist,
+    postTweet
 } = require('../controllers/user');
 
 router.post('/login', login);
@@ -29,5 +29,6 @@ router.get('/get-products', getProducts);
 router.get('/getProductsByCategory', getProductsByCategory);
 router.get('/:userId/cart', getCart);
 router.get('/:userId/wishlist', getWishlist);
+router.post('/tweet', postTweet);
 
 module.exports = router;

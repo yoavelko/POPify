@@ -5,6 +5,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.8.0",
     "mongoose": "^8.5.3",
+    "twitter-api-v2": "^1.18.2",
     "vite": "^5.4.10"
   }
 }

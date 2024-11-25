@@ -1,41 +1,42 @@
 const User = require('../models/userSchema');
 const Product = require('../models/productSchema');
+const { TwitterApi } = require('twitter-api-v2');
 
 exports.login = async (req, res) => {
     try {
-      const { email, password } = req.body;
-  
-      // בדיקת שדות חובה
-      if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required" });
-      }
-  
-      // חיפוש משתמש לפי אימייל וסיסמה
-      const user = await User.findOne({ email, password });
-  
-      if (!user) {
-        return res.status(401).json({ message: "Invalid email or password" });
-      }
-  
-      // בדיקה אם המשתמש הוא מנהל
-      const isAdmin = user.isAdmin || false;
-  
-      // החזרת תגובה עם הודעת הצלחה וסטטוס מנהל
-      res.status(200).json({ 
-        message: "Login successful", 
-        user: { 
-          id: user._id, 
-          email: user.email, 
-          name: user.name, 
-          isAdmin: isAdmin // הוספת שדה isAdmin בתגובה
+        const { email, password } = req.body;
+
+        // בדיקת שדות חובה
+        if (!email || !password) {
+            return res.status(400).json({ message: "Email and password are required" });
         }
-      });
+
+        // חיפוש משתמש לפי אימייל וסיסמה
+        const user = await User.findOne({ email, password });
+
+        if (!user) {
+            return res.status(401).json({ message: "Invalid email or password" });
+        }
+
+        // בדיקה אם המשתמש הוא מנהל
+        const isAdmin = user.isAdmin || false;
+
+        // החזרת תגובה עם הודעת הצלחה וסטטוס מנהל
+        res.status(200).json({
+            message: "Login successful",
+            user: {
+                id: user._id,
+                email: user.email,
+                name: user.name,
+                isAdmin: isAdmin // הוספת שדה isAdmin בתגובה
+            }
+        });
     } catch (error) {
-      console.error("Error during login:", error.message);
-      res.status(500).json({ message: "Server error", error: error.message });
+        console.error("Error during login:", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
     }
-  };
-  
+};
+
 exports.createNewUser = async (req, res) => {
     console.log("Request body:", req.body);
     try {
@@ -110,28 +111,28 @@ exports.addToWishList = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
-   
 
-exports.removeFromWishList = async (req,res) => {
-    try{
-        const {userId,productId}= req.body;
-        if(!userId || !productId)
-            return res.status(400).json({message:"User ID and Product ID are required"});
+
+exports.removeFromWishList = async (req, res) => {
+    try {
+        const { userId, productId } = req.body;
+        if (!userId || !productId)
+            return res.status(400).json({ message: "User ID and Product ID are required" });
 
         const user = await User.findById(userId);
-        if(!user)
-            return res.status(404).json({message:"User not found"});
+        if (!user)
+            return res.status(404).json({ message: "User not found" });
 
         const productIndex = user.wishList.indexOf(productId);
         if (productIndex === -1)
-            return res.status(400).json({message:"Product not found in wishlist"});
+            return res.status(400).json({ message: "Product not found in wishlist" });
 
         user.wishList.splice(productIndex, 1);
         await user.save();
-        res.status(200).json({message:"Product removed from wishlist successfully"});
+        res.status(200).json({ message: "Product removed from wishlist successfully" });
         wishList = user.wishList;
     }
-    catch(error){
+    catch (error) {
         console.error("Error removing product from wishlist:", error.message);
         res.status(500).json({ message: "Server error", error: error.message });
     }
@@ -145,7 +146,7 @@ exports.updateUser = async (req, res) => {
         // Find the user by ID and update the specified fields
         const updatedUser = await User.findByIdAndUpdate(
             userId,
-            { 
+            {
                 ...(name && { name }),
                 ...(lastName && { lastName }),
                 ...(email && { email }),
@@ -174,32 +175,32 @@ exports.updateUser = async (req, res) => {
 
 exports.addToCart = async (req, res) => {
     try {
-      const { userId, productId } = req.body;
-  
-      // בדיקת תקינות קלט
-      if (!userId || !productId) {
-        return res.status(400).json({ message: "userId and productId are required" });
-      }
-  
-      // שליפת המשתמש מהמסד
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-  
-      // הוספת המוצר למערך cart
-      user.cart.push(productId);
-      await user.save();
-  
-      res.status(200).json({
-        message: "Product added to cart successfully",
-        cart: user.cart,
-      });
+        const { userId, productId } = req.body;
+
+        // בדיקת תקינות קלט
+        if (!userId || !productId) {
+            return res.status(400).json({ message: "userId and productId are required" });
+        }
+
+        // שליפת המשתמש מהמסד
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // הוספת המוצר למערך cart
+        user.cart.push(productId);
+        await user.save();
+
+        res.status(200).json({
+            message: "Product added to cart successfully",
+            cart: user.cart,
+        });
     } catch (error) {
-      console.error("Error adding product to cart:", error.message);
-      res.status(500).json({ message: "Server error", error: error.message });
+        console.error("Error adding product to cart:", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
     }
-  };  
+};
 
 
 exports.removeFromCart = async (req, res) => {
@@ -347,4 +348,22 @@ exports.getWishlist = async (req, res) => {
     }
 };
 
+exports.postTweet = async (req, res) => {
+
+    const client = new TwitterApi({
+        appKey: 'xk4txLqJCpXZ8oF3d6c0uvEfI',
+        appSecret: 'omUiobzKvk3IejnQmXx2vNLkQqFShyUgwmAwpEYh2baMSfEfG3',
+        accessToken: '1552969006415585285-x3sR725Ly8I5EB8MHKOgWXtwIEthMq',
+        accessSecret: 'HqVBnfB6OSYDXRAJhDg9s8OSUzAkpuLKnlPzon6HHSKNE',
+    });
+    const { tweetText } = req.body;
+
+    try {
+        const tweet = await client.v1.tweet(tweetText); // Post a tweet
+        res.status(200).json({ success: true, tweet });
+    } catch (error) {
+        console.error('Error sharing purchase:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
 

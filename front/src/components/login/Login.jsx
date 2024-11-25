@@ -1,6 +1,7 @@
 import './Login.css';
 import { useState } from 'react';
 import axios from 'axios';
+import cookies from 'js-cookie';
 
 function Login({ closeLoginModal }) {
     const [loginEmail, setLoginEmail] = useState('');
@@ -18,38 +19,34 @@ function Login({ closeLoginModal }) {
     const handleLoginSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3001/user/login', {
-                email: loginEmail,
-                password: loginPassword
-            });
-    
-            if (response.status === 200) {
-                alert('Login successful!');
-                
-                // Extract user data from the response
-                const { user } = response.data;
-                const { isAdmin, lastName } = user;
-    
-                // Set user information in the state and localStorage
-                setUser(user);
-                localStorage.setItem('user', JSON.stringify(user));
-    
-                // Check if the user is an admin
-                if (isAdmin) {
-                    alert('You are logged in as an Admin!');
-                } else {
-                    alert('You are logged in as a regular user.');
-                }
-                
-                closeLoginModal();
-                window.location.reload();
-            }
+          const response = await axios.post("http://localhost:3001/user/login", {
+            email: loginEmail,
+            password: loginPassword,
+          });
+      
+          if (response.status === 200) {
+            const { user } = response.data;
+            localStorage.setItem("user", JSON.stringify(user));
+            setUser(user);
+            //cookies.set("userId", user.id);
+            console.log(user);
+      
+            // שחזור העגלה מהשרת
+            const cartResponse = await axios.get(`http://localhost:3001/user/${user.id}/cart`);
+            const { cart } = cartResponse.data;
+      
+            localStorage.setItem("cart", JSON.stringify(cart || []));
+            console.log("Cart restored successfully:", cart);
+      
+            closeLoginModal();
+            window.location.reload();
+          }
         } catch (error) {
-            console.error('Error logging in:', error);
-            setLoginError('Login failed.');
+          console.error("Error logging in:", error.message);
+          setLoginError("Login failed.");
         }
-    };
-    
+      };
+      
     
     const handleSignupSubmit = async (event) => {
         event.preventDefault();

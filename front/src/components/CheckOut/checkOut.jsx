@@ -64,9 +64,29 @@ const CheckOut = () => {
     );
   };
 
-  const removeItem = (targetId) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== targetId));
+  const removeItem = async (targetId) => {
+    try {
+      // קריאה לשרת למחיקת המוצר
+      const response = await axios.patch("http://localhost:3001/user/remove-from-cart", {
+        userId: user.id,
+        targetId,
+      });
+  
+      if (response.status === 200) {
+        console.log("Product removed successfully:", response.data);
+  
+        // עדכון ה-state המקומי (הסרת המוצר מהעגלה)
+        setCartItems((prevItems) =>
+          prevItems.filter((item) => item.id !== targetId)
+        );
+      } else {
+        console.error("Failed to remove product from the database");
+      }
+    } catch (error) {
+      console.error("Error removing product from the database:", error.message);
+    }
   };
+  
 
   const handleCheckout = async (event) => {
     event.preventDefault();

@@ -17,7 +17,7 @@ function Orders() {
             setAllOrders(data);
         } catch (error) {
             console.error("Error fetching products:", error.message);
-            setProducts([]);
+            getAllOrders([]);
         }
     }
 

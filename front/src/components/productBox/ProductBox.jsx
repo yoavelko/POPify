@@ -34,25 +34,40 @@ function ProductBox({ index, value }) {
             alert("You must be logged in to add items to the cart.");
             return;
         }
-
+    
+        // שליפת עגלה מה-localStorage
         const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-        storedCart.push(value);
+    
+        // בדיקת קיום המוצר בעגלה
+        const existingItemIndex = storedCart.findIndex(item => item._id === value._id);
+    
+        if (existingItemIndex !== -1) {
+            // אם המוצר כבר קיים בעגלה, נגדיל את הכמות המוצגת
+            storedCart[existingItemIndex].quantity = (storedCart[existingItemIndex].quantity || 1) + 1;
+        } else {
+            // אם המוצר לא קיים, נוסיף אותו עם כמות ראשונית של 1
+            storedCart.push({ ...value, quantity: 1 });
+        }
+    
+        // עדכון ה-localStorage והסטייט
         localStorage.setItem('cart', JSON.stringify(storedCart));
-        setCartItemCount(storedCart.length);
-
-        axios.patch(addToCart, {
-            userId: userId, // שימוש ב-userId מהקונטקסט
-            productId: value._id
-        })
+        setCartItemCount(storedCart.reduce((acc, item) => acc + item.quantity, 0));
+    
+        // קריאה לשרת להוספת המוצר (כמופע חדש)
+        axios
+            .patch(addToCart, {
+                userId: userId, // שימוש ב-userId מהקונטקסט
+                productId: value._id
+            })
             .then((res) => {
                 console.log(res);
                 alert("Product added to cart");
             })
             .catch((err) => {
-                console.log(err);
+                console.error("Error adding product to cart:", err);
             });
     }
-
+    
     function handleAddToWishlist(value) {
         const userId = cookies.get("userId");
         const storedWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];

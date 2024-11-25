@@ -176,16 +176,18 @@ exports.addToCart = async (req, res) => {
     try {
       const { userId, productId } = req.body;
   
+      // בדיקת תקינות קלט
+      if (!userId || !productId) {
+        return res.status(400).json({ message: "userId and productId are required" });
+      }
+  
+      // שליפת המשתמש מהמסד
       const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
   
-      // בדיקה אם המוצר כבר בעגלה
-      if (user.cart.includes(productId)) {
-        return res.status(400).json({ message: "Product already in cart" });
-      }
-  
+      // הוספת המוצר למערך cart
       user.cart.push(productId);
       await user.save();
   
@@ -201,6 +203,7 @@ exports.addToCart = async (req, res) => {
 
 
 exports.removeFromCart = async (req, res) => {
+    console.log('here')
     try {
         const { userId, productId } = req.body;  // Extract userId and productId from the request body
 

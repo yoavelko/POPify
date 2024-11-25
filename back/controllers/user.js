@@ -80,34 +80,37 @@ exports.createNewUser = async (req, res) => {
 
 exports.addToWishList = async (req, res) => {
     try {
-        const { userId, productId } = req.body;
-        if (!userId || !productId)
-            return res.status(400).json({ message: "User ID and Product ID are required" });
+        const { userId, productId } = req.body;  // Extract userId and productId from the request body
 
+        // Find the user by userId
         const user = await User.findById(userId);
-        if (!user)
+
+        if (!user) {
             return res.status(404).json({ message: "User not found" });
+        }
 
+        // Check if the product exists
         const product = await Product.findById(productId);
-        if (!product)
+        if (!product) {
             return res.status(404).json({ message: "Product not found" });
+        }
 
-        if (user.wishList.includes(productId))
-            return res.status(400).json({ message: "Product is already in the wishlis" });
+        // Add the product's ObjectId to the user's cart array
+        user.wishList.push(product._id);
 
-        user.wishList.push(productId);
+        // Save the updated user document
         await user.save();
 
         res.status(200).json({
-            message: "Product added to wishlist successfully",
+            message: "Product added to wish list successfully",
             wishList: user.wishList
         });
-    }
-    catch (error){
-        console.error("Error adding product to wishlist:", error.message);
-        res.status(500).json({message:"Server error", error: error.message })
+    } catch (error) {
+        console.error("Error adding product to cart:", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 };
+   
 
 exports.removeFromWishList = async (req,res) => {
     try{
@@ -171,37 +174,30 @@ exports.updateUser = async (req, res) => {
 
 exports.addToCart = async (req, res) => {
     try {
-        const { userId, productId } = req.body;  // Extract userId and productId from the request body
-
-        // Find the user by userId
-        const user = await User.findById(userId);
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        // Check if the product exists
-        const product = await Product.findById(productId);
-        if (!product) {
-            return res.status(404).json({ message: "Product not found" });
-        }
-
-        // Add the product's ObjectId to the user's cart array
-        user.cart.push(product._id);
-
-        // Save the updated user document
-        await user.save();
-
-        res.status(200).json({
-            message: "Product added to cart successfully",
-            cart: user.cart
-        });
+      const { userId, productId } = req.body;
+  
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      // בדיקה אם המוצר כבר בעגלה
+      if (user.cart.includes(productId)) {
+        return res.status(400).json({ message: "Product already in cart" });
+      }
+  
+      user.cart.push(productId);
+      await user.save();
+  
+      res.status(200).json({
+        message: "Product added to cart successfully",
+        cart: user.cart,
+      });
     } catch (error) {
-        console.error("Error adding product to cart:", error.message);
-        res.status(500).json({ message: "Server error", error: error.message });
+      console.error("Error adding product to cart:", error.message);
+      res.status(500).json({ message: "Server error", error: error.message });
     }
-};
-
+  };  
 
 
 exports.removeFromCart = async (req, res) => {
@@ -284,22 +280,6 @@ exports.getProducts = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
-
-exports.getProducts = async (req, res) => {
-    try {
-        // Fetch all products from the database
-        const products = await Product.find();
-
-        // Respond with the array of user objects
-        res.status(200).json({
-            message: "Products retrieved successfully",
-            products
-        });
-    } catch (error) {
-        console.error("Error retrieving products:", error.message);
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
-};
 exports.getProductsByCategory = async (req, res) => {
     try {
         // Fetch all products from the database grouped by category
@@ -322,4 +302,47 @@ exports.getProductsByCategory = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
+exports.getCart = async (req, res) => {
+    console.log("Request received for getCart:", req.params);
+
+    try {
+        const { userId } = req.params; // Extract userId from the request parameters
+
+        // Find the user by userId and populate the cart with product details
+        const user = await User.findById(userId).populate("cart");
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({
+            message: "Cart retrieved successfully",
+            cart: user.cart, // Return populated cart
+        });
+    } catch (error) {
+        console.error("Error retrieving cart:", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+exports.getWishlist = async (req, res) => {
+    try {
+        const { userId } = req.params; // Extract userId from the request parameters
+
+        // Find the user by userId and populate the wishlist with product details
+        const user = await User.findById(userId).populate("wishList");
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({
+            message: "Wishlist retrieved successfully",
+            wishList: user.wishList, // Return populated wishlist
+        });
+    } catch (error) {
+        console.error("Error retrieving wishlist:", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
 

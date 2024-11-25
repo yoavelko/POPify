@@ -20,29 +20,30 @@ function OrdersPerCustomerLineChart() {
 
   const createLineChart = (data) => {
     const margin = { top: 20, right: 30, bottom: 50, left: 50 };
-    const width = 800 - margin.left - margin.right;
+    const baseWidth = 800;
+    const extraWidthPerDataPoint = 20; // רוחב נוסף פר משתמש
+    const dynamicWidth = Math.max(baseWidth, data.length * extraWidthPerDataPoint); // התאמת הרוחב
+  
+    const width = dynamicWidth - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
   
     const svg = d3.select(chartRef.current)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
+      .html("") // איפוס התוכן הקיים
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
   
     // סקאלות
-    const x = d3.scalePoint()
-      .domain(data.map(d => d.fullName || "Unknown")) // שימוש בשם המלא
-      .range([0, width]);
+    const x = d3.scaleBand()
+      .domain(data.map(d => d.fullName || "Unknown"))
+      .range([0, width])
+      .padding(0.2);
   
     const y = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.totalOrders)]) // טווח ההזמנות
+      .domain([0, d3.max(data, d => d.totalOrders)])
+      .nice() // מתיחה לטווח נעים
       .range([height, 0]);
-  
-    // קו
-    const line = d3.line()
-      .x(d => x(d.fullName || "Unknown"))
-      .y(d => y(d.totalOrders))
-      .curve(d3.curveMonotoneX);
   
     // ציר X
     svg.append("g")
@@ -57,6 +58,11 @@ function OrdersPerCustomerLineChart() {
       .call(d3.axisLeft(y));
   
     // הקו
+    const line = d3.line()
+      .x(d => x(d.fullName || "Unknown") + x.bandwidth() / 2)
+      .y(d => y(d.totalOrders))
+      .curve(d3.curveMonotoneX);
+  
     svg.append("path")
       .datum(data)
       .attr("fill", "none")
@@ -69,7 +75,7 @@ function OrdersPerCustomerLineChart() {
       .data(data)
       .enter()
       .append("circle")
-      .attr("cx", d => x(d.fullName || "Unknown"))
+      .attr("cx", d => x(d.fullName || "Unknown") + x.bandwidth() / 2)
       .attr("cy", d => y(d.totalOrders))
       .attr("r", 4)
       .attr("fill", "#69b3a2")
@@ -92,9 +98,15 @@ function OrdersPerCustomerLineChart() {
       .style("padding", "5px")
       .style("border-radius", "4px")
       .style("visibility", "hidden");
-  };  
+  };
+  
 
-  return <svg ref={chartRef}></svg>;
+  return (
+    <div>
+    <h2>Orders number per User</h2>
+  <svg ref={chartRef}></svg>
+  </div>
+  );
 }
 
 export default OrdersPerCustomerLineChart;

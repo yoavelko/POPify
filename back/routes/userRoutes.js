@@ -11,7 +11,10 @@ const {
     addToWishList, 
     removeFromWishList, 
     getProducts, 
-    getProductsByCategory
+    getCart,
+    getProductsByCategory,
+    getWishlist
+    
 } = require('../controllers/user');
 
 router.post('/login', login);
@@ -23,8 +26,8 @@ router.post('/search-product', searchProducts);
 router.patch('/add-to-wish-list', addToWishList);
 router.patch('/remove-from-wish-list', removeFromWishList);
 router.get('/get-products', getProducts);
-router.get('')
 router.get('/getProductsByCategory', getProductsByCategory);
-
+router.get('/:userId/cart', getCart);
+router.get('/:userId/wishlist', getWishlist);
 
 module.exports = router;

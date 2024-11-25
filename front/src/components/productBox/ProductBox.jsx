@@ -6,6 +6,7 @@ import cookies from 'js-cookie';
 import { useCart } from '../cartIcon';
 import { useWishlist } from '../heartIcon';
 import { useCurrency } from '../../context/CurrencyContext';
+import { useUser } from '../../context/UserContext'; // ייבוא הקונטקסט
 
 function extractDriveFileId(link) {
     if (typeof link !== "string") {
@@ -16,6 +17,8 @@ function extractDriveFileId(link) {
 }
 
 function ProductBox({ index, value }) {
+    const { user } = useUser(); // קבלת פרטי המשתמש מהקונטקסט
+    const userId = user ? user.id : null; // בדיקת משתמש מחובר
     const [hover, setHover] = useState(false);
     const { setCartItemCount } = useCart();
     const { addToWishlist } = useWishlist();
@@ -27,14 +30,18 @@ function ProductBox({ index, value }) {
     }, [setCartItemCount]);
 
     function addToCartFunc(value) {
-        const userId = cookies.get("userId");
+        if (!userId) {
+            alert("You must be logged in to add items to the cart.");
+            return;
+        }
+
         const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
         storedCart.push(value);
         localStorage.setItem('cart', JSON.stringify(storedCart));
         setCartItemCount(storedCart.length);
 
         axios.patch(addToCart, {
-            userId: userId,
+            userId: userId, // שימוש ב-userId מהקונטקסט
             productId: value._id
         })
             .then((res) => {

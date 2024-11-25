@@ -25,20 +25,21 @@
   margin: 0;
 }
 .statistics-container {
-  display: flex; /* פריסת Flexbox */
-  justify-content: space-between; /* רווח שווה בין הגרפים */
-  align-items: flex-start; /* יישור הגרפים למעלה */
-  gap: 20px; /* רווח בין הגרפים */
-  margin: 20px 0; /* רווח למעלה ולמטה */
+  display: flex;
+  flex-wrap: wrap; /* עטיפת הגרפים בשורות נוספות אם חסר מקום */
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
 }
 
 .statistics-container > div {
-  flex: 1; /* כל גרף יתפוס חלק שווה */
-  max-width: 48%; /* גבול רוחב מקסימלי לגרפים */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* עיצוב קל */
-  padding: 10px; /* רווח פנימי */
-  background-color: #ffffff; /* רקע לבן */
-  border-radius: 8px; /* פינות מעוגלות */
+  flex: 1;
+  max-width: 48%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow-x: auto; /* גלילה במקרה של רוחב גדול */
 }
 
 /* Styled admin sections */

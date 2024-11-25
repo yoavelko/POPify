@@ -7,3 +7,4 @@ export const searchProducts = `${userHOST}/search-product`;
 export const addToWishList = `${userHOST}/add-to-wish-list`;
 export const removeFromWishList = `${userHOST}/remove-from-wish-list`;
 export const getProducts = `${userHOST}/get-products`;
+export const postTweet = `${userHOST}/tweet`;

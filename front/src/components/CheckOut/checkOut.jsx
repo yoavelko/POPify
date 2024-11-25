@@ -6,6 +6,7 @@ import './CheckOut.css';
 import { useCart } from '../cartIcon';
 import { useUser } from '../../context/UserContext';
 import { useCurrency } from '../../context/CurrencyContext'; // ייבוא קונטקסט המטבע
+import { postTweet } from '../../utils/UserRoutes';
 
 function extractDriveFileId(link) {
   if (typeof link !== "string") return null;
@@ -166,6 +167,17 @@ const CheckOut = () => {
       alert('ההזמנה בוצעה בהצלחה');
       setCartItems([]);
       localStorage.removeItem('cart');
+      const postTwit = window.confirm('Yay! your order is set! would you like to post about it on X (twitter)?');
+      if (postTwit) {
+        try {
+          const tweetText = `I just purchased ${orderData.productArr[0].name} for $${orderData.productArr[0].price}! 🎉 Check it out here: ${orderData.productArr[0].img}`;
+          const response = await axios.post(postTweet, {tweetText});
+          console.log('Tweet shared successfully:', response.data);
+          
+        } catch (error) {
+          console.error('Error sharing purchase:', error.response?.data?.error || error.message);
+        }
+      }
     } catch (error) {
       console.error('Error creating order:', error);
       setError('הייתה בעיה ביצירת ההזמנה. נסה שוב מאוחר יותר.');

@@ -4,7 +4,19 @@
     text-align: center;
     margin-bottom: 20px;
     margin-top: 10px;
+    z-index: 1000;
 }
+.new-modal-container {
+    border: 2px solid red; /* למעקב */
+    z-index: 1000; /* או ערך גבוה יותר */
+  position: fixed; /* חובה */
+  top: 50%; /* מיקום במרכז המסך */
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+    background-color: white; /* ודאי שהוא נראה */
+  }
+  
 
 .new-modal-flexer {
     display: flex;

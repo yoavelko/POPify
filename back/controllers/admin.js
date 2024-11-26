@@ -3,33 +3,31 @@ const Product = require('../models/productSchema');  // Adjust the path to your 
 
 exports.createProduct = async (req, res) => {
     try {
-        const { name, img, price, category } = req.body;  // Extract product details from the request body
+        const { name, img, price, category } = req.body;
 
-        // Validate required fields
+        // Validate fields
         if (!name || !img || !price || !category) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        // Ensure img is an array
-        if (!Array.isArray(img)) {
-            return res.status(400).json({ message: "Image links should be an array" });
+        // Validate img as an array with two items
+        if (!Array.isArray(img) || img.length !== 2) {
+            return res.status(400).json({ message: "Two images are required" });
         }
 
-        // Create a new product instance
-        const newProduct = new Product({
-            name,
-            img,  // img is expected to be an array of image URLs
-            price,
-            category
-        });
+        // Validate Google Drive links
+        const googleDriveLinkRegex = /^https:\/\/drive\.google\.com\/file\/d\/[A-Za-z0-9_-]+\/view$/;
+        if (!googleDriveLinkRegex.test(img[0]) || !googleDriveLinkRegex.test(img[1])) {
+            return res.status(400).json({ message: "Both images must be valid Google Drive links" });
+        }
 
-        // Save the new product to the database
+        // Create product
+        const newProduct = new Product({ name, img, price, category });
         await newProduct.save();
 
-        // Respond with the newly created product
         res.status(201).json({
             message: "Product created successfully",
-            product: newProduct
+            product: newProduct,
         });
     } catch (error) {
         console.error("Error creating product:", error.message);

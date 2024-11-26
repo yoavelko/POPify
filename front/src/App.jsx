@@ -70,6 +70,11 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+           path="/ordersUserAdmin"
+           element={
+           <OrderHistory userIdFromAdmin={localStorage.getItem('userId')} />} />
+
         </Routes>
         <Footer />
         </WishlistProvider>

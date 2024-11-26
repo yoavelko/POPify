@@ -1,43 +1,48 @@
 import React, { useState } from 'react';
-import { useUser } from '../../../context/UserContext'; // ייבוא ההקשר של המשתמש
 import ProductBox from '../../productBox/ProductBox';
 import './productA.css';
 import { MdOutlineModeEdit } from "react-icons/md";
 import { AiOutlineDelete } from "react-icons/ai";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
-import EditModal from './editModal/editModal';
-import NewModal from './NewModal/NewModal';
 import axios from 'axios';
+import { useUser } from '../../../context/UserContext';
+import NewModal from './newModal/newModal';
 
 const ProductManagement = () => {
-  const { products, isAdmin } = useUser(); // שימוש במוצרים ובמצב מנהל מההקשר
+  const { products, isAdmin, setProducts } = useUser(); // שימוש בקונטקסט
   const [formData, setFormData] = useState({ name: '', img: [], price: '', category: '' });
-  const [editMode, setEditMode] = useState({
-    mode: false,
-    product: null
-  });
   const [currentProductId, setCurrentProductId] = useState(null);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [isEditMode, setIsEditMode] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showNewModal, setShowNewModal] = useState(false); // מצב להצגת NewModal
 
-  isModalOpen ? disableBodyScroll(document) : enableBodyScroll(document)
+  isModalOpen || showNewModal ? disableBodyScroll(document) : enableBodyScroll(document);
 
+  // פונקציה לרענון רשימת המוצרים
+  const refreshProducts = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/admin/products");
+      setProducts(response.data.products); // עדכון רשימת המוצרים
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  // טיפול בעריכת מוצר
   const handleEdit = (product) => {
     setFormData({
       name: product.name,
       img: Array.isArray(product.img) ? product.img : [product.img],
       price: product.price,
-      category: product.category
-    });
-    setEditMode({
-      mode: true,
-      product: product
+      category: product.category,
     });
     setCurrentProductId(product._id);
-    setIsModalOpen(true);
+    setIsEditMode(true);
+    setIsModalOpen(true); // פתיחת המודאל לעריכה
   };
 
+  // שליחת טופס עדכון
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = `http://localhost:3001/admin/update-product/${currentProductId}`;
@@ -46,71 +51,41 @@ const ProductManagement = () => {
     try {
       const response = await axios.patch(url, formData, {
         headers: {
-          'x-auth-token': token,
+          "x-auth-token": token,
         },
       });
       alert(response.data.message);
 
       if (response.data.success) {
-        setProducts((prev) => prev.map((prod) =>
-          prod._id === currentProductId ? response.data.product : prod
-        ));
-      } else {
-        setErrorMessage("Failed to update product in the database.");
+        refreshProducts(); // רענון המוצרים לאחר עדכון
       }
-
-      resetForm();
       setIsModalOpen(false);
+      
     } catch (error) {
-      console.error('Error submitting form:', error);
-      setErrorMessage('Failed to submit form.');
+      console.error("Error submitting form:", error);
     }
   };
 
+  // מחיקת מוצר
   const handleDelete = async (productId) => {
-    const isConfirmed = window.confirm("Are you sure you want to delete this product?");
+    const confirmDelete = window.confirm("Are you sure you want to delete this product?");
+    if (!confirmDelete) return;
 
-    if (isConfirmed) {
-      const url = `http://localhost:3001/admin/products/${productId}`;
-      const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`http://localhost:3001/admin/products/${productId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-      try {
-        const response = await axios.delete(url, {
-          headers: {
-            'x-auth-token': token,
-          },
-        });
-        alert(response.data.message);
-
-        if (response.status === 200) {
-          setProducts((prev) => prev.filter((prod) => prod._id !== productId));
-        }
-      } catch (error) {
-        console.error('Error deleting product:', error);
-        setErrorMessage('Failed to delete product.');
+      if (response.ok) {
+        alert('Product deleted successfully');
+        setProducts((prevProducts) => prevProducts.filter((product) => product._id !== productId));
+      } else {
+        throw new Error('Failed to delete product');
       }
+    } catch (error) {
+      console.error("Error deleting product:", error);
     }
-  };
-
-  const handleAddProduct = () => {
-    setFormData({ name: '', img: [], price: '', category: '' });
-    setEditMode(false);
-    setIsModalOpen(true);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: name === 'img' ? value.split(',') : value,
-    }));
-  };
-
-  const resetForm = () => {
-    setFormData({ name: '', img: [], price: '', category: '' });
-    setEditMode(false);
-    setCurrentProductId(null);
-    setErrorMessage('');
   };
 
   return (
@@ -118,7 +93,13 @@ const ProductManagement = () => {
       <div className="header">
         <h2>Product Management</h2>
         {isAdmin && (
-          <button className="add-button" onClick={handleAddProduct}>
+          <button
+            className="add-button"
+            onClick={() => {
+              setShowNewModal(true);
+              console.log("Show NewModal:", true);
+            }}
+             >
             <IoAddCircleOutline size={24} /> Add Product
           </button>
         )}
@@ -142,24 +123,62 @@ const ProductManagement = () => {
         ))}
       </div>
 
+      {/* מודאל לעריכת מוצר */}
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">
             <span className="close" onClick={() => setIsModalOpen(false)}>&times;</span>
-            <div>{
-            editMode.mode ? 
-            <EditModal product={editMode.product} setIsModalOpen={setIsModalOpen} /> 
-            : 
-            <NewModal  setIsModalOpen={setIsModalOpen} />
-            }</div>
+            <h3>Edit Product</h3>
             <form onSubmit={handleSubmit}>
-              {/* Form inputs remain unchanged */}
+              <label>
+                Name:
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
+              </label>
+              <label>
+                Images (comma-separated URLs):
+                <input
+                  type="text"
+                  name="img"
+                  value={formData.img.join(',')}
+                  onChange={(e) => setFormData({ ...formData, img: e.target.value.split(',') })}
+                />
+              </label>
+              <label>
+                Price:
+                <input
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                  required
+                />
+              </label>
+              <label>
+                Category:
+                <input
+                  type="text"
+                  name="category"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  required
+                />
+              </label>
+              <button type="submit">Update Product</button>
             </form>
           </div>
         </div>
       )}
 
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
+      {/* מודאל להוספת מוצר */}
+      {showNewModal && (
+        <NewModal setIsModalOpen={setShowNewModal} />
+      )}
     </div>
   );
 };

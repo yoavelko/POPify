@@ -13,7 +13,6 @@ export const UserProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
 
-
   // --- Utility Functions ---
   const fetchProducts = async () => {
     try {
@@ -59,8 +58,6 @@ export const UserProvider = ({ children }) => {
     localStorage.removeItem("wishlist");
     window.location.reload();
   };
-  
-    
 
   const addToWishList = async (productId) => {
     if (!user?.id) {
@@ -103,6 +100,7 @@ export const UserProvider = ({ children }) => {
         query,
         updateQuery: setQuery,
         products,
+        setProducts, // הוספת setProducts ל-Context
         isAdmin,
         wishlist,
         addToWishList,

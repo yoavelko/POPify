@@ -8,7 +8,7 @@ function OrdersPerCustomerLineChart() {
   useEffect(() => {
     const fetchCustomerOrders = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/order/orders-per-customer");
+        const response = await axios.get("http://localhost:3001/order/orders-statistics");
         createLineChart(response.data);
       } catch (error) {
         console.error("Error fetching orders per customer:", error);

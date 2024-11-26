@@ -135,6 +135,41 @@ exports.getUserOrders = async (req, res) => {
 
 exports.getOrdersPerCustomer = async (req, res) => {
   try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const orders = await Order.find({ userId }); // שליפת ההזמנות לפי userId
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found for this user" });
+    }
+
+    res.status(200).json({ orders });
+  } catch (error) {
+    console.error("Error fetching orders per customer:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+
+exports.getAllOrders = async (req, res) => {
+  try {
+      const orders = await Order.find();
+
+      res.status(200).json({
+          message: "Orders retrieved successfully",
+          orders
+      });
+  } catch (error) {
+      console.error("Error retrieving orders:", error.message);
+      res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+exports.getOrdersPerCustomerStatistics = async (req, res) => {
+  try {
     const customerOrders = await Order.aggregate([
       {
         $group: {
@@ -176,20 +211,5 @@ exports.getOrdersPerCustomer = async (req, res) => {
   } catch (error) {
     console.error("Error fetching orders per customer:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
-
-
-exports.getAllOrders = async (req, res) => {
-  try {
-      const orders = await Order.find();
-
-      res.status(200).json({
-          message: "Orders retrieved successfully",
-          orders
-      });
-  } catch (error) {
-      console.error("Error retrieving orders:", error.message);
-      res.status(500).json({ message: "Server error", error: error.message });
   }
 };

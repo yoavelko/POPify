@@ -1,59 +1,63 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useCurrency } from '../../context/CurrencyContext';
-import './orders.css';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useLocation } from "react-router-dom";
+import { useCurrency } from "../../context/CurrencyContext";
+import "./orders.css";
 
-function Order() {
-  const { currency, convertPrice, toggleCurrency } = useCurrency(); // שימוש בקונטקסט המטבע
+function Orders() {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const userId = queryParams.get("id"); // שליפת ה-ID מה-URL
+
+  const { currency, convertPrice, toggleCurrency } = useCurrency();
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(null);
-  const [expandedOrders, setExpandedOrders] = useState({}); // עוקב אחר מצב פתיחה של כל הזמנה
+  const [expandedOrders, setExpandedOrders] = useState({});
 
   useEffect(() => {
+    console.log("User ID received:", userId); // הדפסת ה-ID לקונסול
     getAllOrders();
-  }, []);
+  }, [userId]);
 
   const getAllOrders = async () => {
     try {
-      const userString = localStorage.getItem("user");
-      if (!userString) {
-        throw new Error("User not found in localStorage");
+      const userId = new URLSearchParams(window.location.search).get("id"); // שליפת ה-ID מה-URL
+      if (!userId) {
+        throw new Error("User ID not found");
       }
-
-      const user = JSON.parse(userString);
-      const userId = user.id;
-
-      const response = await axios.get('http://localhost:3001/order/user-orders', { params: { id: userId } });
+  
+      const response = await axios.get(`http://localhost:3001/order/${userId}/orders-per-customer`);
       setOrders(response.data.orders);
     } catch (error) {
-      console.error('Error fetching orders:', error);
-      setError('Could not fetch orders. Please try again later.');
+      console.error("Error fetching orders:", error);
+      setError("Could not fetch orders. Please try again later.");
     }
   };
+  
 
   const toggleOrderDetails = (orderId) => {
     setExpandedOrders((prevExpanded) => ({
       ...prevExpanded,
-      [orderId]: !prevExpanded[orderId]
+      [orderId]: !prevExpanded[orderId],
     }));
   };
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
-      case 'completed':
-        return 'status-completed';
-      case 'pending':
-        return 'status-pending';
-      case 'processing':
-        return 'status-processing';
-      case 'shipped':
-        return 'status-shipped';
-      case 'delivered':
-        return 'status-delivered';
-      case 'cancelled':
-        return 'status-cancelled';
+      case "completed":
+        return "status-completed";
+      case "pending":
+        return "status-pending";
+      case "processing":
+        return "status-processing";
+      case "shipped":
+        return "status-shipped";
+      case "delivered":
+        return "status-delivered";
+      case "cancelled":
+        return "status-cancelled";
       default:
-        return '';
+        return "";
     }
   };
 
@@ -62,7 +66,7 @@ function Order() {
       <div className="order-history-header">
         <h1>Order History</h1>
         <button onClick={toggleCurrency} className="currency-toggle">
-          {currency === 'ILS' ? 'Switch to USD' : 'Switch to ILS'}
+          {currency === "ILS" ? "Switch to USD" : "Switch to ILS"}
         </button>
         <p className="order-count">{orders?.length || 0} Orders</p>
       </div>
@@ -73,11 +77,14 @@ function Order() {
         </div>
       )}
 
-      {orders && orders.length > 0 ? (
+      {orders.length > 0 ? (
         <div className="orders-list">
           {orders.map((order) => (
             <div key={order._id} className="order-card">
-              <div className="order-card-header" onClick={() => toggleOrderDetails(order._id)}>
+              <div
+                className="order-card-header"
+                onClick={() => toggleOrderDetails(order._id)}
+              >
                 <div className="order-info">
                   <div className="order-id">
                     <span className="label">Order ID:</span>
@@ -88,18 +95,18 @@ function Order() {
                   </div>
                 </div>
                 <div className="toggle-arrow">
-                  {expandedOrders[order._id] ? '▲' : '▼'}
+                  {expandedOrders[order._id] ? "▲" : "▼"}
                 </div>
               </div>
 
-              {expandedOrders[order._id] && ( // הצגת פרטי ההזמנה רק אם הכרטיס פתוח
+              {expandedOrders[order._id] && (
                 <>
                   <div className="order-items">
                     {order.productArr.map((product, index) => (
                       <div key={index} className="order-item">
                         <div className="item-info">
-                          <img 
-                            src={product.image || '/placeholder-image.jpg'} 
+                          <img
+                            src={product.image || "/placeholder-image.jpg"}
                             alt={product.name}
                             className="item-image"
                           />
@@ -114,7 +121,6 @@ function Order() {
                       </div>
                     ))}
                   </div>
-
                   <div className="order-footer">
                     <div className="shipping-info">
                       <h4>Shipping Address</h4>
@@ -150,4 +156,4 @@ function Order() {
   );
 }
 
-export default Order;
+export default Orders;

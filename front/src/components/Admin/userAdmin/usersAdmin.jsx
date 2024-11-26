@@ -338,16 +338,16 @@ const UserAdmin = () => {
               <button onClick={() => openUpdateModal(user)}>Update User</button>
               <button onClick={() => deleteUser(user.email)}>Delete User</button>
               <a
-                href="#"
+                href={`/ordersUserAdmin?id=${user?._id}`} // העברת ה-ID דרך ה-URL
                 onClick={(e) => {
                   e.preventDefault();
-                  localStorage.setItem('userFullName', `${user.firstName} ${user.lastName}`);
-                  localStorage.setItem('userId', user._id);
-                  window.location.href = '/ordersUserAdmin';
+                  console.log("user id is ", user?._id); // הדפסת ה-ID לקונסול
+                  window.location.href = `/ordersUserAdmin?id=${user?._id}`; // הפניה עם ID בפרמטר
                 }}
               >
                 Orders
               </a>
+
             </div>
           </div>
         ))
@@ -408,15 +408,6 @@ const UserAdmin = () => {
                   type="checkbox"
                   name="admin"
                   checked={formData.admin}
-                  onChange={handleInputChange}
-                />
-              </label>
-              <label>
-                Marketing:
-                <input
-                  type="checkbox"
-                  name="marketing"
-                  checked={formData.marketing}
                   onChange={handleInputChange}
                 />
               </label>

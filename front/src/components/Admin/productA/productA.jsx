@@ -72,7 +72,7 @@ const ProductManagement = () => {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`http://localhost:3001/admin/products/${productId}`, {
+      const response = await axios.delete(`http://localhost:3001/admin/products/${productId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       });

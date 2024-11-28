@@ -1,4 +1,3 @@
-// src/components/Admin/usersAdmin.jsx
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -87,7 +86,6 @@ const UserAdmin = () => {
       email: user.email || '',
       password: '', // Leave password empty for security
       admin: user.admin || false,
-      marketing: user.marketing || false,
     });
     setIsModalOpen(true);
   };
@@ -102,7 +100,6 @@ const UserAdmin = () => {
       email: '',
       password: '',
       admin: false,
-      marketing: false,
     });
   };
 
@@ -143,64 +140,36 @@ const UserAdmin = () => {
   // Function to update a user
   const updateUser = async () => {
     try {
+      console.log("ID to update:", selectedUser._id);
+  
+      // יצירת עותק של הנתונים לעדכון
       const updatedData = { ...formData };
       if (!updatedData.password) {
-        delete updatedData.password; // Don't send password if not updating
+        delete updatedData.password; // אל תשלח סיסמה אם היא ריקה
       }
-
-      const response = await fetch('/updateUser', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          updatedData,
-          email: selectedUser.email,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        createMessage(result.message, false);
+  
+      console.log("Data being sent to server:", updatedData);
+  
+      const response = await axios.patch(
+        `http://localhost:3001/admin/update-user/${selectedUser._id}`,
+        updatedData
+      );
+  
+      if (response.status === 200) {
+        console.log("User updated successfully:", response.data);
+        createMessage(response.data.message, false);
         closeModal();
         getAllUsers();
       } else {
-        setMessage({ text: result.message || 'Failed to update the user.', isError: true });
+        console.error("Failed to update user:", response.data);
+        createMessage(response.data.message || 'Failed to update the user.', true);
       }
     } catch (error) {
-      console.error('Error updating user:', error);
+      console.error("Error updating user:", error);
       createMessage('An error occurred while updating the user.', true);
     }
   };
-
-  // Function to add a new user
-  const addUser = async () => {
-    try {
-      const response = await fetch('/addUser', { // Ensure your backend has this endpoint
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        createMessage(result.message, false);
-        closeModal();
-        getAllUsers();
-      } else {
-        setMessage({ text: result.message || 'Failed to add the user.', isError: true });
-      }
-    } catch (error) {
-      console.error('Error adding user:', error);
-      createMessage('An error occurred while adding the user.', true);
-    }
-  };
-
-  // Function to find a user by email
+    // Function to find a user by email
   const findUser = async () => {
     if (!email) {
       createMessage('Please enter an email to search.', true);
@@ -365,7 +334,7 @@ const UserAdmin = () => {
                 <input
                   type="text"
                   name="firstName"
-                  value={formData.name}
+                  value={formData.firstName}
                   onChange={handleInputChange}
                   required
                 />

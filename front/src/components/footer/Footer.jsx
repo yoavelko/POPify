@@ -28,7 +28,7 @@ function Footer() {
         <li><a href="#">Contact</a></li>
       </ul>
       <p>
-        Welcome to POPify the ultimate POP dolls collection. Our feaured collection contains Disney Marvel etc. 
+        Welcome to POPify the ultimate POP dolls collection. Our feaured collection contains Disney Marvel etc.
       </p>
       <p>© 2024 POPify, Inc. All rights reserved.</p>
     </footer>

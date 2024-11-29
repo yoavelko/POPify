@@ -23,28 +23,28 @@ function OrdersPerCustomerLineChart() {
     const baseWidth = 800;
     const extraWidthPerDataPoint = 20; // רוחב נוסף פר משתמש
     const dynamicWidth = Math.max(baseWidth, data.length * extraWidthPerDataPoint); // התאמת הרוחב
-  
+
     const width = dynamicWidth - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
-  
+
     const svg = d3.select(chartRef.current)
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .html("") // איפוס התוכן הקיים
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
-  
+
     // סקאלות
     const x = d3.scaleBand()
       .domain(data.map(d => d.fullName || "Unknown"))
       .range([0, width])
       .padding(0.2);
-  
+
     const y = d3.scaleLinear()
       .domain([0, d3.max(data, d => d.totalOrders)])
       .nice() // מתיחה לטווח נעים
       .range([height, 0]);
-  
+
     // ציר X
     svg.append("g")
       .attr("transform", `translate(0,${height})`)
@@ -52,24 +52,24 @@ function OrdersPerCustomerLineChart() {
       .selectAll("text")
       .attr("transform", "rotate(-45)")
       .style("text-anchor", "end");
-  
+
     // ציר Y
     svg.append("g")
       .call(d3.axisLeft(y));
-  
+
     // הקו
     const line = d3.line()
       .x(d => x(d.fullName || "Unknown") + x.bandwidth() / 2)
       .y(d => y(d.totalOrders))
       .curve(d3.curveMonotoneX);
-  
+
     svg.append("path")
       .datum(data)
       .attr("fill", "none")
       .attr("stroke", "#69b3a2")
       .attr("stroke-width", 2)
       .attr("d", line);
-  
+
     // נקודות על הקו
     svg.selectAll("circle")
       .data(data)
@@ -88,7 +88,7 @@ function OrdersPerCustomerLineChart() {
           .style("left", `${event.pageX + 10}px`);
       })
       .on("mouseout", () => tooltip.style("visibility", "hidden"));
-  
+
     // כלי עזר להצגת נתונים (Tooltip)
     const tooltip = d3.select("body")
       .append("div")
@@ -99,13 +99,13 @@ function OrdersPerCustomerLineChart() {
       .style("border-radius", "4px")
       .style("visibility", "hidden");
   };
-  
+
 
   return (
     <div>
-    <h2>Orders number per User</h2>
-  <svg ref={chartRef}></svg>
-  </div>
+      <h2>Orders number per User</h2>
+      <svg ref={chartRef}></svg>
+    </div>
   );
 }
 

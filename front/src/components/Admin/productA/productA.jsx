@@ -60,7 +60,7 @@ const ProductManagement = () => {
         refreshProducts(); // רענון המוצרים לאחר עדכון
       }
       setIsModalOpen(false);
-      
+
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -99,7 +99,7 @@ const ProductManagement = () => {
               setShowNewModal(true);
               console.log("Show NewModal:", true);
             }}
-             >
+          >
             <IoAddCircleOutline size={24} /> Add Product
           </button>
         )}

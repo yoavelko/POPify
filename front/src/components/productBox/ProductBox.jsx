@@ -34,13 +34,13 @@ function ProductBox({ index, value }) {
             alert("You must be logged in to add items to the cart.");
             return;
         }
-    
+
         // שליפת עגלה מה-localStorage
         const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-    
+
         // בדיקת קיום המוצר בעגלה
         const existingItemIndex = storedCart.findIndex(item => item._id === value._id);
-    
+
         if (existingItemIndex !== -1) {
             // אם המוצר כבר קיים בעגלה, נגדיל את הכמות המוצגת
             storedCart[existingItemIndex].quantity = (storedCart[existingItemIndex].quantity || 1) + 1;
@@ -48,11 +48,11 @@ function ProductBox({ index, value }) {
             // אם המוצר לא קיים, נוסיף אותו עם כמות ראשונית של 1
             storedCart.push({ ...value, quantity: 1 });
         }
-    
+
         // עדכון ה-localStorage והסטייט
         localStorage.setItem('cart', JSON.stringify(storedCart));
         setCartItemCount(storedCart.reduce((acc, item) => acc + item.quantity, 0));
-    
+
         // קריאה לשרת להוספת המוצר (כמופע חדש)
         axios
             .patch(addToCart, {
@@ -67,7 +67,7 @@ function ProductBox({ index, value }) {
                 console.error("Error adding product to cart:", err);
             });
     }
-    
+
     function handleAddToWishlist(value) {
         const userId = cookies.get("userId");
         const storedWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
@@ -77,30 +77,30 @@ function ProductBox({ index, value }) {
             localStorage.setItem('wishlist', JSON.stringify(storedWishlist));
             addToWishlist(value);
         }
-        
+
         axios.patch(addToWishList, {
             userId: userId,
             productId: value._id
         })
-        .then((res) => {
-            console.log(res.data);
-            alert("Product added to wishlist");
-        })
-        .catch((err) => {
-            console.error("Error adding to wishlist:", err.response?.data || err.message);
-        });
+            .then((res) => {
+                console.log(res.data);
+                alert("Product added to wishlist");
+            })
+            .catch((err) => {
+                console.error("Error adding to wishlist:", err.response?.data || err.message);
+            });
     }
 
-    const imgIds = Array.isArray(value.img) 
-        ? value.img.map(link => extractDriveFileId(link)) 
+    const imgIds = Array.isArray(value.img)
+        ? value.img.map(link => extractDriveFileId(link))
         : [];
     const imageUrl = imgIds.length > 1
-        ? (hover 
-            ? `https://drive.google.com/thumbnail?id=${imgIds[1]}` 
+        ? (hover
+            ? `https://drive.google.com/thumbnail?id=${imgIds[1]}`
             : `https://drive.google.com/thumbnail?id=${imgIds[0]}`
-          )
+        )
         : `https://via.placeholder.com/150`; // ברירת מחדל במקרה של תמונה חסרה
-    
+
     const convertedPrice = convertPrice(value.price || 0);
 
     return (

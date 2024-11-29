@@ -29,7 +29,7 @@ function Orders() {
         <div className='admin-orders-container'>
             <div className='admin-orders-header'>Orders Managment</div>
             {allOrders && allOrders.map((value, index) => (
-                <OrderBox key={index} value={value} setUpdate={setUpdate} update={update}/>
+                <OrderBox key={index} value={value} setUpdate={setUpdate} update={update} />
             ))}
         </div>
     )

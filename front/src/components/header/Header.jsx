@@ -52,7 +52,7 @@ const Navbar = () => {
   const handleProductClick = (name) => {
     updateQuery(name);
     setShowSearchResults(false);
-    navigate('/homepage'); 
+    navigate('/homepage');
   };
 
   const filteredProducts = products.filter(item =>

@@ -8,6 +8,8 @@ import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
 const UserAdmin = () => {
   // State variables
   const [email, setEmail] = useState('');
+  const [query, setQuery] = useState(''); // שאילתת החיפוש
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const [message, setMessage] = useState({ text: '', isError: false });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
@@ -169,162 +171,185 @@ const UserAdmin = () => {
       console.error('Error deleting user:', error);
       createMessage('Failed to delete the user, please try again later.', true);
     }
-  };
+  }
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  useEffect(() => {
+    setShowSearchResults(query.length > 0);
+  }, [query]);
 
   return (
     <div className="user-admin-container">
-    <div className="admin-header">
-      <h1>User Administration</h1>
-      <button className="close-button" onClick={closeModal}>✕</button>
-    </div>
-  
-    <div className="search-section">
-      <form onSubmit={(e) => e.preventDefault()} className="search-form">
-        <div className="input-group">
+      <div className="admin-header">
+        <h1>User Administration</h1>
+      </div>
+
+      <div className="search-section">
+        <form onSubmit={(e) => e.preventDefault()} className="search-form">
           <input
-            type="email"
-            placeholder="Enter user email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            type="text"
+            placeholder="Search users..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
           />
+          {showSearchResults && (
+            <div className="search-results">
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => (
+                  <div
+                    key={user._id}
+                    className="search-result-item"
+                    onClick={() => {
+                      setMarked(user); // עדכון המשתמש המסומן
+                      setQuery(''); // איפוס תיבת החיפוש
+                      setShowSearchResults(false); // סגירת תוצאות החיפוש
+                    }}
+                  >
+                    {user.name} ({user.email})
+                  </div>
+                ))
+              ) : (
+                <p>No users found.</p>
+              )}
+            </div>
+          )}
           <div className="button-group">
-            <button 
-              type="button" 
-              className="btn btn-primary" 
+            <button
+              type="button"
+              className="btn btn-primary"
               onClick={getAllUsers}
             >
               Show All Users
             </button>
-            <button 
-              type="button" 
-              className="btn btn-success" 
+            <button
+              type="button"
+              className="btn btn-success"
               onClick={openAddModal}
             >
               Add New User
             </button>
           </div>
+        </form>
+      </div>
+
+      <div className="content-layout">
+        <div className="maps-container">
+          <Maps users={users} setMarked={setMarked} />
+          {marked && (
+            <div className="marked-user-card">
+              <h3>User Details</h3>
+              <p><strong>Name:</strong> {marked.name}</p>
+              <p><strong>Email:</strong> {marked.email}</p>
+              <p><strong>Admin Status:</strong> {marked.isAdmin ? 'Yes' : 'No'}</p>
+            </div>
+          )}
         </div>
-      </form>
-    </div>
-  
-    <div className="content-layout">
-      <div className="maps-container">
-        <Maps users={users} setMarked={setMarked} />
-        {marked && (
-          <div className="marked-user-card">
-            <h3>User Details</h3>
-            <p><strong>Name:</strong> {marked.name}</p>
-            <p><strong>Admin Status:</strong> {marked.isAdmin ? 'Yes' : 'No'}</p>
-          </div>
-        )}
-      </div>
-  
-      <div className="users-container">
-        {users.map((user) => (
-          <div className="user-card" key={user._id}>
-            <div className="user-header">
-              <h3>{user.name} {user.lastName}</h3>
-              <span className={`admin-badge ${user.isAdmin ? 'admin' : 'user'}`}>
-                {user.isAdmin ? 'Admin' : 'User'}
-              </span>
-            </div>
-            <div className="user-details">
-              <p><strong>Email:</strong> {user.email}</p>
-              <div className="user-actions">
-                <button 
-                  className="btn btn-edit" 
-                  onClick={() => openUpdateModal(user)}
-                >
-                  Edit
-                </button>
-                <button 
-                  className="btn btn-delete" 
-                  onClick={() => deleteUser(user.email)}
-                >
-                  Delete
-                </button>
-                <a
-                  href={`/ordersUserAdmin?id=${user?._id}`}
-                  className="btn btn-view"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.location.href = `/ordersUserAdmin?id=${user?._id}`;
-                  }}
-                >
-                  View Orders
-                </a>
+
+        <div className="users-container">
+          {users.map((user) => (
+            <div className="user-card" key={user._id}>
+              <div className="user-header">
+                <h3>{user.name} {user.lastName}</h3>
+                <span className={`admin-badge ${user.isAdmin ? 'admin' : 'user'}`}>
+                  {user.isAdmin ? 'Admin' : 'User'}
+                </span>
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  
-    {isModalOpen && (
-      <div className="modal-overlay">
-        <div className="modal-container">
-          <button className="modal-close" onClick={closeModal}>✕</button>
-          <div className="modal-content">
-            <h2>{isUpdateMode ? 'Edit User' : 'Add User'}</h2>
-            <form onSubmit={handleFormSubmit}>
-              <div className="form-grid">
-                <input 
-                  name="name" 
-                  value={formData.name} 
-                  onChange={handleInputChange} 
-                  placeholder="Name" 
-                  required 
-                />
-                <input 
-                  name="lastName" 
-                  value={formData.lastName} 
-                  onChange={handleInputChange} 
-                  placeholder="Last Name" 
-                  required 
-                />
-                <input 
-                  name="email" 
-                  value={formData.email} 
-                  onChange={handleInputChange} 
-                  placeholder="Email" 
-                  disabled={isUpdateMode} 
-                  required 
-                />
-                <input 
-                  name="password" 
-                  type="password"
-                  value={formData.password} 
-                  onChange={handleInputChange} 
-                  placeholder="Password" 
-                />
-                <div className="admin-toggle">
-                  <label>
-                    Admin
-                    <input 
-                      type="checkbox" 
-                      name="isAdmin" 
-                      checked={formData.isAdmin} 
-                      onChange={handleInputChange} 
-                    />
-                  </label>
+              <div className="user-details">
+                <p><strong>Email:</strong> {user.email}</p>
+                <div className="user-actions">
+                  <button
+                    className="btn btn-edit"
+                    onClick={() => openUpdateModal(user)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-delete"
+                    onClick={() => deleteUser(user.email)}
+                  >
+                    Delete
+                  </button>
+                  <a
+                    href={`/ordersUserAdmin?id=${user?._id}`}
+                    className="btn btn-view"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = `/ordersUserAdmin?id=${user?._id}`;
+                    }}
+                  >
+                    View Orders
+                  </a>
                 </div>
               </div>
-              <div className="modal-actions">
-                <button type="button" className="btn btn-cancel" onClick={closeModal}>
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn-submit">
-                  {isUpdateMode ? 'Save Changes' : 'Add User'}
-                </button>
-              </div>
-            </form>
-          </div>
+            </div>
+          ))}
         </div>
       </div>
-    )}
-  </div>
-  );
-};
 
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-container">
+            <button type="button" className="close-button" onClick={closeModal}>
+              x
+            </button>
+            <div className="modal-content">
+              <h2>{isUpdateMode ? 'Edit User' : 'Add User'}</h2>
+              <form onSubmit={handleFormSubmit}>
+                <div className="form-grid">
+                  <input
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="Name"
+                    required
+                  />
+                  <input
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    placeholder="Last Name"
+                    required
+                  />
+                  <input
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="Email"
+                    disabled={isUpdateMode}
+                    required
+                  />
+                  <input
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    placeholder="Password"
+                  />
+                  <div className="admin-toggle">
+                    <label>
+                      Admin
+                      <input
+                        type="checkbox"
+                        name="isAdmin"
+                        checked={formData.isAdmin}
+                        onChange={handleInputChange}
+                      />
+                    </label>
+                  </div>
+                </div>
+                <div className="modal-actions">
+                  <button type="submit" className="btn btn-submit">
+                    {isUpdateMode ? 'Save Changes' : 'Add User'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 export default UserAdmin;

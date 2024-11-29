@@ -12,7 +12,7 @@ exports.createOrder = async (req, res) => {
     }
 
     const newOrder = new Order({
-      productArr,  
+      productArr,
       userId,
       status,
       totalSum,
@@ -78,7 +78,7 @@ exports.getProductsWithPopularity = async (req, res) => {
       name: product.name || "Unknown Product",
       price: product.price || 0,
       category: product.category || "Uncategorized",
-      img: product.img||[],
+      img: product.img || [],
       purchaseCount: 0
     }));
 
@@ -102,7 +102,7 @@ exports.getProductsWithPopularity = async (req, res) => {
   }
 };
 
-exports.getOrder= async (req, res) => {
+exports.getOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).exec();
     if (!order) {
@@ -125,7 +125,7 @@ exports.getUserOrders = async (req, res) => {
     if (!orders || orders.length === 0) {
       return res.status(404).json({ message: 'No orders found for this user' });
     }
-    
+
     res.json({ orders });
   } catch (error) {
     console.error("Error fetching orders:", error);
@@ -157,15 +157,15 @@ exports.getOrdersPerCustomer = async (req, res) => {
 
 exports.getAllOrders = async (req, res) => {
   try {
-      const orders = await Order.find();
+    const orders = await Order.find();
 
-      res.status(200).json({
-          message: "Orders retrieved successfully",
-          orders
-      });
+    res.status(200).json({
+      message: "Orders retrieved successfully",
+      orders
+    });
   } catch (error) {
-      console.error("Error retrieving orders:", error.message);
-      res.status(500).json({ message: "Server error", error: error.message });
+    console.error("Error retrieving orders:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 exports.getOrdersPerCustomerStatistics = async (req, res) => {

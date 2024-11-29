@@ -25,7 +25,7 @@ function Orders() {
       if (!userId) {
         throw new Error("User ID not found");
       }
-  
+
       const response = await axios.get(`http://localhost:3001/order/${userId}/orders-per-customer`);
       setOrders(response.data.orders);
     } catch (error) {
@@ -33,7 +33,7 @@ function Orders() {
       setError("Could not fetch orders. Please try again later.");
     }
   };
-  
+
 
   const toggleOrderDetails = (orderId) => {
     setExpandedOrders((prevExpanded) => ({

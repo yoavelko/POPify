@@ -171,9 +171,9 @@ const CheckOut = () => {
       if (postTwit) {
         try {
           const tweetText = `I just purchased ${orderData.productArr[0].name} for $${orderData.productArr[0].price}! 🎉 Check it out here: ${orderData.productArr[0].img}`;
-          const response = await axios.post(postTweet, {tweetText});
+          const response = await axios.post(postTweet, { tweetText });
           console.log('Tweet shared successfully:', response.data);
-          
+
         } catch (error) {
           console.error('Error sharing purchase:', error.response?.data?.error || error.message);
         }

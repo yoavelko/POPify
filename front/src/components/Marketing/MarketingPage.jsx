@@ -1,6 +1,6 @@
 import { useUser } from '../../context/UserContext';
 import ProductBox from '../productBox/ProductBox';
-import Slider from "../Gallery/Slider";  
+import Slider from "../Gallery/Slider";
 import "./MarketingPage.css";
 import pic from '../../media/fire.png';
 import pic5 from '../../media/pic5.png';
@@ -16,7 +16,7 @@ function MarketingPage() {
 
   return (
     <div className="marketing-page">
-      
+
 
       <section className="main-banner">
         <div className="banner-content">

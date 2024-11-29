@@ -6,21 +6,21 @@ const Maps = ({ users, setMarked }) => {
   const [locations, setLocations] = useState([]);
 
   useEffect(() => {
+
     const fetchCoordinates = async () => {
-      // Extract addresses from users array inside useEffect
       const addresses = users.map(user => user.address);
-      console.log('Addresses:', addresses); // Log addresses for debugging
+      //console.log('Addresses:', addresses); // Log addresses for debugging
 
       const promises = addresses.map(async (address) => {
         // Check for empty or invalid addresses
         if (!address) {
-          console.error(`Invalid address: ${address}`);
+         // console.error(`Invalid address: ${address}`);
           return null; // Skip invalid addresses
         }
 
         // Encode address to ensure it's formatted correctly for the API request
         const encodedAddress = encodeURIComponent(address);
-        console.log(`Fetching coordinates for: ${encodedAddress}`);
+        //console.log(`Fetching coordinates for: ${encodedAddress}`);
 
         try {
           const response = await axios.get(
@@ -34,18 +34,18 @@ const Maps = ({ users, setMarked }) => {
           );
 
           // Log the response to check for errors or missing data
-          console.log('Geocoding API Response:', response.data);
+          //console.log('Geocoding API Response:', response.data);
 
           // Check if the response contains results
           const location = response.data.results[0]?.geometry.location;
           if (!location) {
-            console.error(`No location found for ${address}`);
+            //console.error(`No location found for ${address}`);
             return null;
           }
 
           return { address, ...location };
         } catch (error) {
-          console.error(`Error fetching geocode data for ${address}:`, error.message);
+          //console.error(`Error fetching geocode data for ${address}:`, error.message);
           return null;
         }
       });
@@ -55,7 +55,7 @@ const Maps = ({ users, setMarked }) => {
       const validLocations = results.filter((location) => location !== null);
 
       setLocations(validLocations);
-      console.log('Locations:', validLocations);
+      //console.log('Locations:', validLocations);
     };
 
     fetchCoordinates();

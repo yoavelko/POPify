@@ -7,6 +7,7 @@ const {
   updateProduct, 
   getAllUsers, 
   deleteUser,
+  deleteOrder,
   updateUserforA
 } = require('../controllers/admin');
 const Product = require('../models/productSchema'); // ודא שהמודל נטען בצורה נכונה
@@ -16,6 +17,7 @@ router.delete('/products/:id', deleteProduct);
 router.patch('/update-product/:id', updateProduct);
 router.get('/users', getAllUsers);
 router.patch('/users/:id/delete', deleteUser);
+router.patch('/orders/:id/delete', deleteOrder);
 router.patch('/update-user/:id', updateUserforA);
 
 router.get('/products', async (req, res) => {

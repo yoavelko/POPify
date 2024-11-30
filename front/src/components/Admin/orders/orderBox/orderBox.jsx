@@ -1,5 +1,6 @@
 import './orderBox.css'
-import axios from 'axios';
+import axios from 'axios'
+import { FaTrash } from "react-icons/fa";
 import { updateOrderStatus } from '../../../../utils/OrderRoutes';
 
 function OrderBox({ value, setUpdate, update }) {
@@ -17,8 +18,31 @@ function OrderBox({ value, setUpdate, update }) {
         }
     }
 
+const deleteOrder = async (orderId) => {
+  if (!window.confirm('Are you sure you want to delete this order?')) {
+    return; 
+  }
+  try {
+    // קריאה לשרת למחיקת ההזמנה
+    const response = await axios.patch(`http://localhost:3001/admin/orders/${orderId}/delete`);
+
+    if (response.status === 200) {
+      alert('Order deleted successfully!');
+      return response.data; // החזרת נתוני ההזמנה שנמחקה
+    } else {
+      console.error('Failed to delete order:', response.data.message);
+      alert('Failed to delete the order.');
+    }
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    alert('An error occurred while deleting the order.');
+  }
+};
+
+
     return (
         <div className='order-box-container'>
+            <div className='delete' onClick={() => deleteOrder(value._id)}><FaTrash  /></div>
             <div>Order ID: <span className='order-box-keys'>{value._id}</span></div>
             <div>Total products in order: <span className='order-box-keys'>{value.productArr.length}</span></div>
             <div>Total sum: <span className='order-box-keys'>{value.totalSum}</span></div>

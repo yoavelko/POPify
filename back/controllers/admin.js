@@ -1,5 +1,6 @@
 const User = require('../models/userSchema');
-const Product = require('../models/productSchema');  // Adjust the path to your Product model
+const Product = require('../models/productSchema');
+const Order=require('../models/orderSchema');
 
 exports.createProduct = async (req, res) => {
   try {
@@ -92,8 +93,6 @@ exports.updateProduct = async (req, res) => {
 };
 
 
-
-
 exports.getAllUsers = async (req, res) => {
   try {
     // Fetch all users from the database
@@ -169,6 +168,24 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+exports.deleteOrder = async (req, res) => {
+  const orderId = req.params.id;
+
+  try {
+    const deletedOrder = await Order.findByIdAndDelete(orderId);
+
+    if (!deletedOrder) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    res.status(200).json({ message: 'Order deleted successfully', order: deletedOrder });
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    res.status(500).json({ message: 'Failed to delete the order', error });
+  }
+};
+
 exports.logOut = async (req, res) => {
   req.session.destroy((err) => {
     if (err) {

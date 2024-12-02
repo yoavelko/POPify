@@ -1,67 +1,32 @@
-
-/* עיצוב כללי */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+.form-modal-content {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background-color: #fff;
   padding: 2rem;
+  background-color: #fff;
   border-radius: 10px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  overflow: auto;
 }
-
-h2 {
-  font-size: 1.5rem;
-  color: #333;
-  margin-bottom: 1rem;
-  text-align: left;
-}
-
-.input-group {
-  margin-bottom: 1rem;
-}
-
-.input-group label {
-  display: block;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 0.5rem;
-}
-
-.input-group input {
-  width: 100%;
+.custom-input-group input {
+  width: 100%; /* תופס את כל הרוחב */
   padding: 0.75rem;
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 1rem;
-  color: #333;
+  box-sizing: border-box; /* מתחשב בפדינג */
 }
-
-.input-group input::placeholder {
-  color: #aaa;
+.form-close-button{
+  background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #dc3545;
+    margin-inline-end:auto;
 }
-
-.error-message {
-  color: red;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-}
-
-/* עיצוב כפתור התחברות */
 .login-button, .signup-button {
-  width: 100%;
+  width: 100%; /* כפתורים מותאמים לרוחב */
   padding: 0.75rem;
   background-color: #000;
   color: #fff;
@@ -74,8 +39,11 @@ h2 {
   text-align: center;
 }
 
-.login-button:hover, .signup-button:hover {
-  background-color: #333;
+
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 
 /* עיצוב קישורים */
@@ -84,26 +52,4 @@ h2 {
   text-align: center;
   color: #007bff;
   cursor: pointer;
-}
-
-.toggle-form span, .forgot-password a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.toggle-form span:hover, .forgot-password a:hover {
-  text-decoration: underline;
-}
-
-/* עיצוב שדה "זכור אותי" וקישור "שכחת סיסמה" */
-.extra-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.9rem;
-  color: #333;
-}
-
-.extra-options input[type="checkbox"] {
-  margin-right: 0.5rem;
 }

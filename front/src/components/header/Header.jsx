@@ -143,11 +143,13 @@ const Navbar = () => {
           {isSubMenuOpen && user && (
             <aside className="profile-menu">
               <ul>
-                <li onClick={toggleEditModal}>Update Details</li>
-                <Link to="/orders">
+                <li onClick={() => { toggleEditModal(); toggleMenu(); }}>Update Details</li>
+                <Link to="/orders" onClick={toggleMenu}>
                   <li>Order History</li>
                 </Link>
-                <li onClick={logout}>Logout</li>
+                <Link to='/'>
+                  <li onClick={logout}>Logout</li>
+                </Link>
               </ul>
             </aside>
           )}

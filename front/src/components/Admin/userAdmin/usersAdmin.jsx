@@ -260,20 +260,23 @@ const UserAdmin = () => {
                 <p><strong>Email:</strong> {user.email}</p>
                 <div className="user-actions">
                   <button
-                    className="btn btn-edit"
+                    id='admin-edit-user-btn'
+                    className="btn-edit"
                     onClick={() => openUpdateModal(user)}
                   >
                     Edit
                   </button>
                   <button
-                    className="btn btn-delete"
+                    id='admin-edit-user-btn'
+                    className="btn-delete"
                     onClick={() => deleteUser(user.email)}
                   >
                     Delete
                   </button>
                   <a
                     href={`/ordersUserAdmin?id=${user?._id}`}
-                    className="btn btn-view"
+                    id='admin-edit-user-btn'
+                    className="btn-view"
                     onClick={(e) => {
                       e.preventDefault();
                       window.location.href = `/ordersUserAdmin?id=${user?._id}`;

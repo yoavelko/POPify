@@ -3,8 +3,14 @@ import { Link } from 'react-router-dom';
 import "./admin.css";
 import Statistics from '../Admin/statistics/ProductS';
 import StatisticsU from '../Admin/statistics/UsersOrders';
+import { useEffect } from 'react';
 
 const AdminDashboard = () => {
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="bodyAdminDashboard">
       <div className="admin-header">

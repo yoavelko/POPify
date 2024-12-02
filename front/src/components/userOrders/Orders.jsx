@@ -21,11 +21,9 @@ function Orders() {
 
   const getAllOrders = async () => {
     try {
-      const userId = new URLSearchParams(window.location.search).get("id"); // שליפת ה-ID מה-URL
-      if (!userId) {
-        throw new Error("User ID not found");
-      }
-
+      const userObj = JSON.parse(localStorage.getItem("user"));
+      const userId = userObj?.id
+      console.log(userId);
       const response = await axios.get(`http://localhost:3001/order/${userId}/orders-per-customer`);
       setOrders(response.data.orders);
     } catch (error) {

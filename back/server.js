@@ -1,12 +1,12 @@
-const cors = require('cors'); // that what i added
+const cors = require('cors'); // enable to connect from any IP
 const express = require('express');
 const app = express();
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); // connection to mongoDB
 const userRoute = require('./routes/userRoutes');
 const adminRoute = require('./routes/adminRoutes');
 const orderRoute = require('./routes/orderRoutes');
 
-app.use(cors()) // that what i added
+app.use(cors())
 mongoose.connect('mongodb+srv://yoavelkobi889:iVpnI4KHCxbmPS0M@cluster0.tkogcco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {})
   .then(() => console.log('Connected to mongoDB'))
   .catch(err => console.log(err));

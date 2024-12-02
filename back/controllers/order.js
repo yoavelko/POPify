@@ -24,7 +24,10 @@ exports.createOrder = async (req, res) => {
     // עדכון היסטוריית המשתמש
     await User.findByIdAndUpdate(
       userId,
-      { $push: { history: savedOrder._id } },
+      {
+        $push: { history: savedOrder._id },
+        $set: { cart: [] }
+      },
       { new: true }
     );
 

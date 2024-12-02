@@ -51,7 +51,7 @@
 }
 
 .user-card:hover {
-  transform: translateY(-5px);
+  transform: scale(1.01);
 }
 
 .user-header {
@@ -82,7 +82,13 @@
   gap: 10px;
 }
 
-.btn {
+.btn-edit { background-color: #ffc107; }
+.btn-delete { background-color: #dc3545; color: white; }
+.btn-view { background-color: #17a2b8; color: white; }
+.btn-primary { background-color: #007bff; color: white; }
+.btn-success { background-color: #28a745; color: white; }
+
+#admin-edit-user-btn {
   padding: 8px 15px;
   border: none;
   border-radius: 5px;
@@ -90,14 +96,9 @@
   transition: opacity 0.3s ease;
 }
 
-.btn-edit { background-color: #ffc107; }
-.btn-delete { background-color: #dc3545; color: white; }
-.btn-view { background-color: #17a2b8; color: white; }
-.btn-primary { background-color: #007bff; color: white; }
-.btn-success { background-color: #28a745; color: white; }
-
-.btn:hover {
+#admin-edit-user-btn:hover {
   opacity: 0.8;
+  transform: scale(1.05);
 }
 
 .modal-overlay {

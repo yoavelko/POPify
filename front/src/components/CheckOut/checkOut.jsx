@@ -167,17 +167,17 @@ const CheckOut = () => {
       alert('ההזמנה בוצעה בהצלחה');
       setCartItems([]);
       localStorage.removeItem('cart');
-      const postTwit = window.confirm('Yay! your order is set! would you like to post about it on X (twitter)?');
-      if (postTwit) {
-        try {
-          const tweetText = `I just purchased ${orderData.productArr[0].name} for $${orderData.productArr[0].price}! 🎉 Check it out here: ${orderData.productArr[0].img}`;
-          const response = await axios.post(postTweet, { tweetText });
-          console.log('Tweet shared successfully:', response.data);
-
-        } catch (error) {
-          console.error('Error sharing purchase:', error.response?.data?.error || error.message);
-        }
-      }
+      // const postTwit = window.confirm('Yay! your order is set! would you like to post about it on X (twitter)?');
+      // if (postTwit) {
+      //   try {
+      //     const response = await axios.post(postTweet, {
+      //       tweetText: 'I just purchased this amazing product! 🎉',
+      //     });
+      //     console.log('Tweet posted:', response.data);
+      //   } catch (error) {
+      //     console.error('Error posting tweet:', error.message);
+      //   }
+      // }
     } catch (error) {
       console.error('Error creating order:', error);
       setError('הייתה בעיה ביצירת ההזמנה. נסה שוב מאוחר יותר.');

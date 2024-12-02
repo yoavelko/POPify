@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductBox from '../../productBox/ProductBox';
 import './productA.css';
 import { MdOutlineModeEdit } from "react-icons/md";
@@ -18,6 +18,10 @@ const ProductManagement = () => {
   const [showNewModal, setShowNewModal] = useState(false); // מצב להצגת NewModal
 
   isModalOpen || showNewModal ? disableBodyScroll(document) : enableBodyScroll(document);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // פונקציה לרענון רשימת המוצרים
   const refreshProducts = async () => {

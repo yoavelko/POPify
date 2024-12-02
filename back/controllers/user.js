@@ -1,5 +1,6 @@
 const User = require('../models/userSchema');
 const Product = require('../models/productSchema');
+const axios = require('axios');
 const { TwitterApi } = require('twitter-api-v2');
 
 exports.login = async (req, res) => {
@@ -348,22 +349,27 @@ exports.getWishlist = async (req, res) => {
     }
 };
 
-exports.postTweet = async (req, res) => {
+const bearerToken = ''
 
-    const client = new TwitterApi({
-        appKey: 'xk4txLqJCpXZ8oF3d6c0uvEfI',
-        appSecret: 'omUiobzKvk3IejnQmXx2vNLkQqFShyUgwmAwpEYh2baMSfEfG3',
-        accessToken: '1552969006415585285-x3sR725Ly8I5EB8MHKOgWXtwIEthMq',
-        accessSecret: 'HqVBnfB6OSYDXRAJhDg9s8OSUzAkpuLKnlPzon6HHSKNE',
-    });
+exports.postTweet = async (req, res) => {
+    const bearerToken = 'AAAAAAAAAAAAAAAAAAAAAAFAxQEAAAAAUE%2FV1zUJmYItPsmf5Q%2BxSeaSGIM%3D1XKJXJKuwFZFPtTJikWCeqoedHxBfhld1EfG75EEmwvH47DSeR';
     const { tweetText } = req.body;
 
     try {
-        const tweet = await client.v1.tweet(tweetText); // Post a tweet
-        res.status(200).json({ success: true, tweet });
+        const response = await axios.post(
+            'https://api.x.com/2/tweets',
+            { text: tweetText },
+            {
+                headers: {
+                    Authorization: `Bearer ${bearerToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        res.status(200).json(response.data);
     } catch (error) {
-        console.error('Error sharing purchase:', error);
-        res.status(500).json({ success: false, error: error.message });
+        console.error('Error posting tweet:', error.response?.data || error.message);
+        res.status(500).json({ error: error.response?.data || error.message });
     }
-}
+};
 

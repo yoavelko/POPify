@@ -6,8 +6,14 @@ import pic from '../../media/fire.png';
 import pic5 from '../../media/pic5.png';
 import pic7 from '../../media/pic7.png';
 import VideoFile from '../../media/orsula.mp4';
+import { useEffect } from 'react';
 
 function MarketingPage() {
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const { query, products } = useUser();
 
   const filteredProducts = products.filter(item =>

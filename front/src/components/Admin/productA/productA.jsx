@@ -35,6 +35,7 @@ const ProductManagement = () => {
 
   // טיפול בעריכת מוצר
   const handleEdit = (product) => {
+
     setFormData({
       name: product.name,
       img: Array.isArray(product.img) ? product.img : [product.img],
@@ -43,7 +44,7 @@ const ProductManagement = () => {
     });
     setCurrentProductId(product._id);
     setIsEditMode(true);
-    setIsModalOpen(true); // פתיחת המודאל לעריכה
+    setIsModalOpen(!isModalOpen); // פתיחת המודאל לעריכה
   };
 
   // שליחת טופס עדכון
@@ -74,14 +75,15 @@ const ProductManagement = () => {
   const handleDelete = async (productId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this product?");
     if (!confirmDelete) return;
-
+    console.log(`product id: ${productId}`);
+    
     try {
       const response = await axios.delete(`http://localhost:3001/admin/products/${productId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       });
 
-      if (response.ok) {
+      if (response) {
         alert('Product deleted successfully');
         setProducts((prevProducts) => prevProducts.filter((product) => product._id !== productId));
       } else {
@@ -129,52 +131,57 @@ const ProductManagement = () => {
 
       {/* מודאל לעריכת מוצר */}
       {isModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={() => setIsModalOpen(false)}>&times;</span>
-            <h3>Edit Product</h3>
-            <form onSubmit={handleSubmit}>
-              <label>
-                Name:
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                />
-              </label>
-              <label>
-                Images (comma-separated URLs):
-                <input
-                  type="text"
-                  name="img"
-                  value={formData.img.join(',')}
-                  onChange={(e) => setFormData({ ...formData, img: e.target.value.split(',') })}
-                />
-              </label>
-              <label>
-                Price:
-                <input
-                  type="number"
-                  name="price"
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  required
-                />
-              </label>
-              <label>
-                Category:
-                <input
-                  type="text"
-                  name="category"
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  required
-                />
-              </label>
-              <button type="submit">Update Product</button>
-            </form>
+        <div className="modal" id='modal'>
+          <div className='edit-modal-container'>
+            <div className='edit-modal-inner'>
+              <div className="modal-content">
+                <span className="close" onClick={() => setIsModalOpen(false)}>&times;</span>
+                <h3>Edit Product</h3>
+                <form onSubmit={handleSubmit}>
+                  <label>
+                    Name:
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Images (comma-separated URLs):
+                    <input
+                      type="text"
+                      name="img"
+                      value={formData.img.join(',')}
+                      onChange={(e) => setFormData({ ...formData, img: e.target.value.split(',') })}
+                    />
+                  </label>
+                  <label>
+                    Price:
+                    <input
+                      type="number"
+                      name="price"
+                      value={formData.price}
+                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Category:
+                    <input
+                      type="text"
+                      name="category"
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      required
+                    />
+                  </label>
+                  <button type="submit">Update Product</button>
+                </form>
+              </div>
+
+            </div>
           </div>
         </div>
       )}

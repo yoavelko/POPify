@@ -8,7 +8,8 @@ const {
   getAllUsers, 
   deleteUser,
   deleteOrder,
-  updateUserforA
+  updateUserforA,
+  postOnFacebook
 } = require('../controllers/admin');
 const Product = require('../models/productSchema'); // ודא שהמודל נטען בצורה נכונה
 
@@ -19,6 +20,7 @@ router.get('/users', getAllUsers);
 router.patch('/users/:id/delete', deleteUser);
 router.patch('/orders/:id/delete', deleteOrder);
 router.patch('/update-user/:id', updateUserforA);
+router.post('/post-on-facebook', postOnFacebook);
 
 router.get('/products', async (req, res) => {
   try {

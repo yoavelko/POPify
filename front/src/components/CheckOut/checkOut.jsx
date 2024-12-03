@@ -24,6 +24,7 @@ const CheckOut = () => {
   const [subtotal, setSubtotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     const loadCart = () => {
@@ -121,6 +122,7 @@ const CheckOut = () => {
       return updatedCart; // עדכון מיידי של הסטייט
     });
 
+
     // קריאה לשרת למחיקת המוצר
     axios.patch('http://localhost:3001/user/remove-from-cart', {
       userId: userId, // שימוש ב-userId מהקונטקסט
@@ -166,6 +168,7 @@ const CheckOut = () => {
       console.log('Order created:', response.data);
       alert('ההזמנה בוצעה בהצלחה');
       setCartItems([]);
+      setCartItemCount(0);
       localStorage.removeItem('cart');
       // const postTwit = window.confirm('Yay! your order is set! would you like to post about it on X (twitter)?');
       // if (postTwit) {

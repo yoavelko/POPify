@@ -1,6 +1,6 @@
 const User = require('../models/userSchema');
 const Product = require('../models/productSchema');
-const Order=require('../models/orderSchema');
+const Order = require('../models/orderSchema');
 
 exports.createProduct = async (req, res) => {
   try {
@@ -221,3 +221,40 @@ exports.updateUserforA = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+
+exports.postOnFacebook = async (req, res) => {
+
+
+  const pageAccessToken = 'EAAH3RlCEek8BO4MNJoODvvUwy2BOvyPvml7NUxi6vAL5WvbdxqZCXOlrqCk6aaxSZCy3vGMhVh9ZB4hc12nmM0xunzZAZCf0j0NlevHY6NwyoTpTKwazj2qVHKG6PltMQXv73fjYOk0EElRM5gbvcLgBpOEpl9pAlq3uB7nVpfoZBk3d8sH98CMyo7tUl1tBRfZB1tHUu5kiygtHz6P';
+  const pageId = '489219224276581';
+  const product = await Product.findOne({ _id: req.body.id });
+  const message = `Check out our new product:`;
+  const imageUrl = 'https://c1-ebgames.eb-cdn.com.au/merchandising/images/packshots/12b7af8d45e44fdd81cd5fba5376a443_Large.jpg';
+
+  try {
+    const response = await fetch(
+      `https://graph.facebook.com/${pageId}/photos`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: imageUrl,
+          caption: message,
+          access_token: pageAccessToken,
+        }),
+      }
+    );
+
+    if (response.ok) {
+      console.log("Post uploaded successfully to Facebook");
+    } else {
+      console.log("Error while posting to Facebook:", response);
+    }
+  } catch (error) {
+    console.log('Error posting on faceook:', error.message);
+    res.status(500).json({ message: 'Server error', error: error.message })
+  }
+}
